@@ -28,13 +28,13 @@ const extensionConfig = {
     resolve: {
         // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
         extensions: [".ts", ".js"],
-        // alias: {
-        //     "@cmt": path.resolve(__dirname, "src"),
-        //     "@enum": path.resolve(__dirname, "src/enum"),
-        //     "@model": path.resolve(__dirname, "src/model"),
-        //     "@plugin": path.resolve(__dirname, "src/plugin"),
-        //     "@service": path.resolve(__dirname, "src/service"),
-        // },
+        alias: {
+            "@cmt": path.resolve(__dirname, "src"),
+            "@enum": path.resolve(__dirname, "src/enum"),
+            "@model": path.resolve(__dirname, "src/model"),
+            "@plugin": path.resolve(__dirname, "src/plugin"),
+            "@service": path.resolve(__dirname, "src/service"),
+        },
         // mainFields: ["main", "module"],
     },
     module: {
