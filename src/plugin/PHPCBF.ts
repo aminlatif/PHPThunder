@@ -74,6 +74,9 @@ export default class PHPCBF extends Plugin {
         childProcess.exec(phpExecutablePath + " " + phpCBFExecutablePath + " --version", (err, stdout, stderr) => {
             if (err) {
                 vscode.window.showErrorMessage(err.toString());
+                this.log(err.toString(), null, 2);
+                this.log(stderr.toString(), null, 2);
+                this.log(stdout.toString(), null, 2);
                 return;
             }
             const message = "PHPCBF version: " + stdout.toString();

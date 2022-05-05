@@ -34,6 +34,9 @@ export default class PHPCSFixer extends Plugin {
         childProcess.exec(phpExecutablePath + " " + phpCSFixerExecutablePath + " --version", (err, stdout, stderr) => {
             if (err) {
                 vscode.window.showErrorMessage(err.toString());
+                this.log(err.toString(), null, 2);
+                this.log(stderr.toString(), null, 2);
+                this.log(stdout.toString(), null, 2);
                 return;
             }
             const message = "PHP-CS-Fixer version: " + stdout.toString();

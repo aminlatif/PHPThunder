@@ -2,7 +2,7 @@
 	"name": "phpthunder",
 	"displayName": "PHPThunder",
 	"description": "PHP tools an utilities for VSCode.",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"publisher": "Babirusa",
 	"author": {
 		"name": "Amin Latifkar",
