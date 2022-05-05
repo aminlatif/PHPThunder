@@ -1,19 +1,19 @@
 {
 	"name": "phpthunder",
 	"displayName": "PHPThunder",
-	"description": "",
+	"description": "PHP tools an utilities for VSCode.",
 	"version": "0.0.1",
 	"publisher": "Babirusa",
 	"author": {
 		"name": "Amin Latifkar",
 		"email": "amin.latifkar@gmail.com"
 	},
-	"license": "ISC",
-	"homepage": "",
-	"icon": "logo.png",
+	"license": "MIT",
+	"homepage": "https://github.com/aminlatif/PHPThunder",
+	"icon": "src/assets/images/logo.png",
 	"repository": {
 		"type": "git",
-		"url": ""
+		"url": "https://github.com/aminlatif/PHPThunder"
 	},
 	"engines": {
 		"vscode": "^1.66.0"
