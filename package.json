@@ -1,0 +1,385 @@
+{
+	"name": "phpthunder",
+	"displayName": "PHPThunder",
+	"description": "",
+	"version": "0.0.1",
+	"publisher": "Babirusa",
+	"author": {
+		"name": "Amin Latifkar",
+		"email": "amin.latifkar@gmail.com"
+	},
+	"license": "ISC",
+	"homepage": "",
+	"icon": "logo.png",
+	"repository": {
+		"type": "git",
+		"url": ""
+	},
+	"engines": {
+		"vscode": "^1.66.0"
+	},
+	"categories": [
+		"Programming Languages",
+		"Formatters",
+		"Linters",
+		"Other"
+	],
+	"keywords": [
+		"php",
+		"format",
+		"multi-root ready",
+		"autocomplete",
+		"language",
+		"support"
+	],
+	"activationEvents": [
+		"onLanguage:php"
+	],
+	"main": "./dist/extension.js",
+	"_moduleAliases": {
+		"@enum": "dist/enum",
+		"@model": "dist/model",
+		"@plugin": "dist/plugin",
+		"@service": "dist/service"
+	},
+	"contributes": {
+		"languages": [
+			{
+				"id": "php"
+			}
+		],
+		"configuration": {
+			"title": "PHPThunder",
+			"type": "object",
+			"properties": {
+				"phpthunder.enable": {
+					"Title": "Enable PHPThunder",
+					"scope": "resource",
+					"type": "boolean",
+					"default": true,
+					"description": "",
+					"order": -3
+				},
+				"phpthunder.phpExecutablePath": {
+					"Title": "PHP Executable Path",
+					"scope": "resource",
+					"type": "string",
+					"default": "/usr/bin/php",
+					"description": "Points to the php exectuable",
+					"order": -2
+				},
+				"phpthunder.composerExecutablePath": {
+					"Title": "Composer Executable Path",
+					"scope": "resource",
+					"type": "string",
+					"default": "composer",
+					"description": "Points to the composer exectuable",
+					"order": -1
+				},
+				"phpthunder.debug": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": false,
+					"description": "Control whether format debug is enabled.",
+					"order": 0
+				},
+				"phpthunder.composerJsonPath": {
+					"scope": "resource",
+					"type": "string",
+					"default": "composer.json",
+					"description": "The path to composer.json",
+					"order": 1
+				},
+				"phpthunder.format.enable": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": true,
+					"description": "Control whether format debug is enabled.",
+					"order": 2
+				},
+				"phpthunder.format.onSave": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": false,
+					"description": "Run PHP Code Beautifier and Fixer on save.",
+					"order": 3
+				},
+				"phpthunder.format.onBracket": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": false,
+					"description": "when press down the key } auto fix the code in the brackets {}",
+					"order": 4
+				},
+				"phpthunder.format.onSemicolon": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": false,
+					"description": "when press down the key ; auto fix the code at the current line",
+					"order": 5
+				},
+				"phpthunder.format.formatHtml": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": false,
+					"description": "whether formatting html at the same time",
+					"order": 6
+				},
+				"phpthunder.format.documentFormattingProvider": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": true,
+					"description": "Register PHP document formatting provider, right mouse-click context menu, show as 'Format Document', after changing this option you should restart your editor.",
+					"order": 8
+				},
+				"phpthunder.format.phpcs.enable": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": true,
+					"description": "Control whether phpcs is enabled for PHP files or not.",
+					"order": 10
+				},
+				"phpthunder.format.phpcs.executablePath": {
+					"scope": "resource",
+					"type": "string",
+					"default": null,
+					"description": "Points to the phpcs exectuable.",
+					"order": 15
+				},
+				"phpthunder.format.phpcbf.enable": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": true,
+					"description": "Control whether phpcbf is enabled for PHP files or not.",
+					"order": 20
+				},
+				"phpthunder.format.phpcbf.executablePath": {
+					"scope": "resource",
+					"type": "string",
+					"default": null,
+					"description": "Points to the phpcbf exectuable.",
+					"order": 25
+				},
+				"phpthunder.format.phpcsfixer.enable": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": true,
+					"description": "Control whether php-cs-fixer is enabled for PHP files or not.",
+					"order": 27
+				},
+				"phpthunder.format.phpcsfixer.executablePath": {
+					"scope": "resource",
+					"type": "string",
+					"default": null,
+					"description": "Points to the php-cs-fixer exectuable.",
+					"order": 28
+				},
+				"phpthunder.format.phpcsfixer.allowRisky": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": false,
+					"description": "Are risky fixers allowed?",
+					"order": 29
+				},
+				"phpthunder.format.phpfmt.enable": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": true,
+					"description": "Control whether phpfmt is enabled for PHP files or not.",
+					"order": 30
+				},
+				"phpthunder.format.phpfmt.executablePath": {
+					"scope": "resource",
+					"type": "string",
+					"default": null,
+					"description": "Points to the phpfmt exectuable.",
+					"order": 31
+				},
+				"phpthunder.format.standard": {
+					"scope": "resource",
+					"type": [
+						"string",
+						"null"
+					],
+					"default": "PSR12",
+					"description": "Optional. The name or path of the coding standard to use.",
+					"order": 40
+				},
+				"phpthunder.format.autoConfigSearch": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": false,
+					"description": "Automatically search for any `phpcs.xml`, `phpcs.xml.dist`, `phpcs.ruleset.xml` or `ruleset.xml` file to use as configuration. Overrides custom standards defined above.",
+					"order": 50
+				},
+				"phpthunder.format.ignorePatterns": {
+					"scope": "resource",
+					"type": "array",
+					"items": {
+						"type": "string",
+						"title": "A glob pattern to skip files and folders that match."
+					},
+					"default": [],
+					"description": "An array of glob patterns to skip files and folders that match when linting your documents.",
+					"order": 60
+				},
+				"phpthunder.format.errorSeverity": {
+					"scope": "resource",
+					"type": "number",
+					"default": 5,
+					"minimum": 0,
+					"description": "The phpcs minimum severity an error must have to be displayed.",
+					"order": 70
+				},
+				"phpthunder.format.warningSeverity": {
+					"scope": "resource",
+					"type": "number",
+					"default": 5,
+					"minimum": 0,
+					"description": "The phpcs minimum severity a warning must have to be displayed.",
+					"order": 80
+				},
+				"phpthunder.format.showWarnings": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": true,
+					"description": "Control whether phpcs warnings are displayed.",
+					"order": 90
+				},
+				"phpthunder.format.showSources": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": false,
+					"description": "Show sniff source codes in diagnostic messages.",
+					"order": 100
+				},
+				"phpthunder.format.traceServer": {
+					"scope": "resource",
+					"type": "string",
+					"enum": [
+						"off",
+						"messages",
+						"verbose"
+					],
+					"default": "off",
+					"description": "Traces the communication between VSCode and the language server.",
+					"order": 110
+				}
+			}
+		},
+		"commands": [
+			{
+				"command": "phpthunder.showPHPVersion",
+				"title": "PHPThunder: PHP Version"
+			},
+			{
+				"command": "phpthunder.showPHPCSVersion",
+				"title": "PHPThunder: PHPCS Version"
+			},
+			{
+				"command": "phpthunder.showPHPCBFVersion",
+				"title": "PHPThunder: PHPCBF Version"
+			},
+			{
+				"command": "phpthunder.showPHPCSFixerVersion",
+				"title": "PHPThunder: PHP-CS-Fixer Version"
+			},
+			{
+				"command": "phpthunder.showPHPFMTVersion",
+				"title": "PHPThunder: PHPFMT Version"
+			},
+			{
+				"command": "phpthunder.showComposerVersion",
+				"title": "PHPThunder: Composer Version"
+			},
+			{
+				"command": "phpthunder.showPHPCSInstalledCodingStandards",
+				"title": "PHPThunder: PHPCS Installed Coding Standards"
+			},
+			{
+				"command": "phpthunder.showPHPCBFInstalledCodingStandards",
+				"title": "PHPThunder: PHPCBF Installed Coding Standards"
+			},
+			{
+				"command": "phpthunder.phpcsDocument",
+				"title": "PHPThunder: PHPCS Document"
+			},
+			{
+				"command": "phpthunder.phpcbfDocument",
+				"title": "PHPThunder: PHPCBF Document"
+			},
+			{
+				"command": "phpthunder.phpcsfixerDocument",
+				"title": "PHPThunder: PHPCSFixer Document"
+			},
+			{
+				"command": "phpthunder.phpfmtDocument",
+				"title": "PHPThunder: PHPFMT Document"
+			}
+		],
+		"menus": {
+			"editor/context": [
+				{
+					"when": "resourceLangId == php",
+					"command": "phpthunder.phpcsDocument",
+					"group": "phpthunder"
+				},
+				{
+					"when": "resourceLangId == php",
+					"command": "phpthunder.phpcbfDocument",
+					"group": "phpthunder"
+				},
+				{
+					"when": "resourceLangId == php",
+					"command": "phpthunder.phpcsfixerDocument",
+					"group": "phpthunder"
+				},
+				{
+					"when": "resourceLangId == php",
+					"command": "phpthunder.phpfmtDocument",
+					"group": "phpthunder"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run package",
+		"compile": "webpack",
+		"watch": "webpack --watch",
+		"package": "webpack --mode production --devtool hidden-source-map",
+		"compile-tests": "tsc -p . --outDir out",
+		"watch-tests": "tsc -p . -w --outDir out",
+		"pretest": "npm run compile-tests && npm run compile && npm run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/cross-spawn": "^6.0.2",
+		"@types/expect": "^24.3.0",
+		"@types/glob": "^7.2.0",
+		"@types/micromatch": "^4.0.2",
+		"@types/mocha": "^9.1.0",
+		"@types/node": "^14.18.13",
+		"@types/semver": "^7.3.9",
+		"@types/vscode": "^1.66.0",
+		"@typescript-eslint/eslint-plugin": "^5.16.0",
+		"@typescript-eslint/parser": "^5.16.0",
+		"@vscode/test-electron": "^2.1.3",
+		"eslint": "^8.11.0",
+		"glob": "^7.2.0",
+		"mocha": "^9.2.2",
+		"npm-run-all": "^4.1.5",
+		"rimraf": "^3.0.2",
+		"ts-loader": "^9.2.8",
+		"ts-node": "^10.7.0",
+		"tslint": "^6.1.3",
+		"typescript": "^4.6.3",
+		"typescript-formatter": "^7.2.2",
+		"webpack": "^5.70.0",
+		"webpack-cli": "^4.9.2"
+	},
+	"dependencies": {
+		"module-alias": "^2.2.2",
+		"vscode-languageclient": "^3.5.0"
+	}
+}
