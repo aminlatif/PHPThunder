@@ -3,46 +3,37 @@ import * as childProcess from "child_process";
 
 import PluginAbstract from "@interface/PluginAbstract";
 
+import State from "@model/State";
+import Initializer from "./PHPFMT/Initializer";
+import ShowInfo from "./PHPFMT/ShowInfo";
+import DocumentActions from "./PHPFMT/DocumentActions";
+import StringActions from "./PHPFMT/StringActions";
+import FormatActions from "./PHPFMT/FormatActions";
+
 export default class PHPFMT extends PluginAbstract {
     public pluginName: string = "PHPFMT";
 
+    public initializer: Initializer;
+    public showInfo:ShowInfo;
+    public documentActions: DocumentActions;
+    public stringActions: StringActions;
+    public formatActions: FormatActions;
+
+    constructor(extensionContext: vscode.ExtensionContext, state: State) {
+        super(extensionContext, state);
+        this.initializer = new Initializer(this);
+        this.showInfo = new ShowInfo(this);
+        this.documentActions = new DocumentActions(this);
+        this.stringActions = new StringActions(this);
+        this.formatActions = new FormatActions(this);
+    }
+
     public registerSubscriptionsTool(): void {
-        this.getExtensionContext().subscriptions.push(
-            vscode.commands.registerCommand("phpthunder.showPHPFMTVersion", () => {
-                this.showPHPFMTVersion();
-            })
-        );
-
-        this.getExtensionContext().subscriptions.push(
-            vscode.commands.registerCommand("phpthunder.phpfmtDocument", () => {
-                this.phpFMTCurrentDocument();
-            })
-        );
+        this.initializer.registerSubscriptions();
     }
 
-    public initTool(): void {}
-
-    public showPHPFMTVersion(): void {
-        this.checkIfEnabled();
-        const phpExecutablePath = this.getPluginPHPExecutablePath();
-        this.log("PHP Executable Path: " + phpExecutablePath, null, 0);
-        const phpFMTExecutablePath = this.getToolExecutablePath;
-        this.log("PHPFMT Executable Path: " + phpFMTExecutablePath, null, 0);
-        this.execute(phpExecutablePath + " -v", false);
-        const command = this.getExceuteBaseCommand() + " --version";
-        this.execute(command, true);
-    }
-
-    public phpFMTCurrentDocument(): void {
-        this.phpFMTDocument(this.getCurrentlyOpenTabDocumentPath());
-    }
-
-    public async phpFMTDocument(filePath: string): Promise<void> {
-        let phpfmtCommand = this.getExceuteBaseCommand();
-        // phpfmtCommand += " --standard=" + this.getStandard() + " ";
-        phpfmtCommand += "--no-colors ";
-        phpfmtCommand += filePath;
-        await this.execute(phpfmtCommand);
+    public initTool(): void {
+        this.initializer.init();
     }
 
     async setConfig(name: string, value: string): Promise<void> {
@@ -73,5 +64,21 @@ export default class PHPFMT extends PluginAbstract {
             return this.getConfig().getPHPFMTConfig().isEnabled();
         }
         return false;
+    }
+
+    public getShowInfo(): ShowInfo {
+        return this.showInfo;
+    }
+
+    public getDocumentActions(): DocumentActions {
+        return this.documentActions;
+    }
+
+    public getStringActions(): StringActions {
+        return this.stringActions;
+    }
+
+    public getFormatActions(): FormatActions {
+        return this.formatActions;
     }
 }

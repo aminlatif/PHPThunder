@@ -3,46 +3,37 @@ import * as childProcess from "child_process";
 
 import PluginAbstract from "@interface/PluginAbstract";
 
+import State from "@model/State";
+import Initializer from "./PHPCSFixer/Initializer";
+import ShowInfo from "./PHPCSFixer/ShowInfo";
+import DocumentActions from "./PHPCSFixer/DocumentActions";
+import StringActions from "./PHPCSFixer/StringActions";
+import FormatActions from "./PHPCSFixer/FormatActions";
+
 export default class PHPCSFixer extends PluginAbstract {
     public pluginName: string = "PHPCSFixer";
 
+    public initializer: Initializer;
+    public showInfo:ShowInfo;
+    public documentActions: DocumentActions;
+    public stringActions: StringActions;
+    public formatActions: FormatActions;
+
+    constructor(extensionContext: vscode.ExtensionContext, state: State) {
+        super(extensionContext, state);
+        this.initializer = new Initializer(this);
+        this.showInfo = new ShowInfo(this);
+        this.documentActions = new DocumentActions(this);
+        this.stringActions = new StringActions(this);
+        this.formatActions = new FormatActions(this);
+    }
+
     public registerSubscriptionsTool(): void {
-        this.getExtensionContext().subscriptions.push(
-            vscode.commands.registerCommand("phpthunder.showPHPCSFixerVersion", () => {
-                this.showPHPCSFixerVersion();
-            })
-        );
-
-        this.getExtensionContext().subscriptions.push(
-            vscode.commands.registerCommand("phpthunder.phpcsfixerDocument", () => {
-                this.phpCSFixerCurrentDocument();
-            })
-        );
+        this.initializer.registerSubscriptions();
     }
 
-    public initTool(): void {}
-
-    public showPHPCSFixerVersion(): void {
-        this.checkIfEnabled();
-        const phpExecutablePath = this.getPluginPHPExecutablePath();
-        this.log("PHP Executable Path: " + phpExecutablePath, null, 0);
-        const phpCSFixerExecutablePath = this.getToolExecutablePath;
-        this.log("PHPCSFixer Executable Path: " + phpCSFixerExecutablePath, null, 0);
-        this.execute(phpExecutablePath + " -v", false);
-        const command = this.getExceuteBaseCommand() + " --version";
-        this.execute(command, true);
-    }
-
-    public phpCSFixerCurrentDocument(): void {
-        this.phpCSFixerDocument(this.getCurrentlyOpenTabDocumentPath());
-    }
-
-    public async phpCSFixerDocument(filePath: string): Promise<void> {
-        let phpcsfixerCommand = this.getExceuteBaseCommand();
-        // phpcsfixerCommand += " --standard=" + this.getConfig().getPHPCSFixerConfig().getStandard() + " ";
-        phpcsfixerCommand += "--no-colors ";
-        phpcsfixerCommand += filePath;
-        await this.execute(phpcsfixerCommand);
+    public initTool(): void {
+        this.initializer.init();
     }
 
     async setConfig(name: string, value: string): Promise<void> {
@@ -73,5 +64,21 @@ export default class PHPCSFixer extends PluginAbstract {
             return this.getConfig().getPHPCSFixerConfig().isEnabled();
         }
         return false;
+    }
+
+    public getShowInfo(): ShowInfo {
+        return this.showInfo;
+    }
+
+    public getDocumentActions(): DocumentActions {
+        return this.documentActions;
+    }
+
+    public getStringActions(): StringActions {
+        return this.stringActions;
+    }
+
+    public getFormatActions(): FormatActions {
+        return this.formatActions;
     }
 }

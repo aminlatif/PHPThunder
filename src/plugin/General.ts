@@ -3,28 +3,34 @@ import * as childProcess from "child_process";
 
 import PluginAbstract from "@interface/PluginAbstract";
 
+import State from "@model/State";
+import Initializer from "./General/Initializer";
+import ShowInfo from "./General/ShowInfo";
+
 export default class General extends PluginAbstract {
     public pluginName: string = "General";
 
+    public initializer: Initializer;
+    public showInfo:ShowInfo;
+
+    constructor(extensionContext: vscode.ExtensionContext, state: State) {
+        super(extensionContext, state);
+        this.initializer = new Initializer(this);
+        this.showInfo = new ShowInfo(this);
+    }
+
     public registerSubscriptionsTool(): void {
-        this.getExtensionContext().subscriptions.push(
-            vscode.commands.registerCommand("phpthunder.showPHPVersion", () => {
-                this.showPHPVersion();
-            })
-        );
+        this.initializer.registerSubscriptions();
     }
 
-    public initTool(): void {}
-
-    public showPHPVersion(): void {
-        this.checkIfEnabled();
-        const phpExecutablePath = this.getPHPExecutablePath();
-        this.log("PHP Executable Path: " + phpExecutablePath, null, 0);
-        const command = phpExecutablePath + " -v";
-        this.execute(command, true);
+    public initTool(): void {
+        this.initializer.init();
     }
-
     public getToolExecutablePath(): string {
         throw new Error("PHPThunder: General plugin is not a php tool.");
+    }
+
+    public getShowInfo(): ShowInfo {
+        return this.showInfo;
     }
 }

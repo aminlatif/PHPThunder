@@ -3,28 +3,28 @@ import * as childProcess from "child_process";
 
 import PluginAbstract from "@interface/PluginAbstract";
 
+import State from "@model/State";
+import Initializer from "./Composer/Initializer";
+import ShowInfo from "./Composer/ShowInfo";
+
 export default class Composer extends PluginAbstract {
     public pluginName: string = "Composer";
 
-    public registerSubscriptionsTool(): void {
-        this.getExtensionContext().subscriptions.push(
-            vscode.commands.registerCommand("phpthunder.showComposerVersion", () => {
-                this.showComposerVersion();
-            })
-        );
+    public initializer: Initializer;
+    public showInfo:ShowInfo;
+
+    constructor(extensionContext: vscode.ExtensionContext, state: State) {
+        super(extensionContext, state);
+        this.initializer = new Initializer(this);
+        this.showInfo = new ShowInfo(this);
     }
 
-    public initTool(): void {}
+    public registerSubscriptionsTool(): void {
+        this.initializer.registerSubscriptions();
+    }
 
-    public showComposerVersion(): void {
-        this.checkIfEnabled();
-        const phpExecutablePath = this.getPluginPHPExecutablePath();
-        this.log("PHP Executable Path: " + phpExecutablePath, null, 0);
-        const composerExecutablePath = this.getToolExecutablePath();
-        this.log("Composer Executable Path: " + composerExecutablePath, null, 0);
-        this.execute(phpExecutablePath + " -v", false);
-        const command = this.getExceuteBaseCommand() + " --version";
-        this.execute(command, true);
+    public initTool(): void {
+        this.initializer.init();
     }
 
     public getPluginPHPExecutablePath(): string {
@@ -49,5 +49,9 @@ export default class Composer extends PluginAbstract {
             return this.getConfig().getComposerConfig().isEnabled();
         }
         return false;
+    }
+
+    public getShowInfo(): ShowInfo {
+        return this.showInfo;
     }
 }

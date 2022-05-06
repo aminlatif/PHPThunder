@@ -13,68 +13,31 @@ import * as path from "path";
 
 import PluginAbstract from "@interface/PluginAbstract";
 
+import State from "@model/State";
+import Initializer from "./PHPCS/Initializer";
+import ShowInfo from "./PHPCS/ShowInfo";
+import DocumentActions from "./PHPCS/DocumentActions";
+
 export default class PHPCS extends PluginAbstract {
     public pluginName: string = "PHPCS";
 
+    public initializer: Initializer;
+    public showInfo: ShowInfo;
+    public documentActions: DocumentActions;
+
+    constructor(extensionContext: vscode.ExtensionContext, state: State) {
+        super(extensionContext, state);
+        this.initializer = new Initializer(this);
+        this.showInfo = new ShowInfo(this);
+        this.documentActions = new DocumentActions(this);
+    }
+
     public registerSubscriptionsTool(): void {
-        this.getExtensionContext().subscriptions.push(
-            vscode.commands.registerCommand("phpthunder.showPHPCSVersion", () => {
-                this.showPHPCSVersion();
-            })
-        );
-
-        this.getExtensionContext().subscriptions.push(
-            vscode.commands.registerCommand("phpthunder.showPHPCSInstalledCodingStandards", () => {
-                this.showPHPCSInstalledCodingStandards();
-            })
-        );
-
-        this.getExtensionContext().subscriptions.push(
-            vscode.commands.registerCommand("phpthunder.phpcsDocument", () => {
-                this.phpCSCurrentDocument();
-            })
-        );
+        this.initializer.registerSubscriptions();
     }
 
     public initTool(): void {
-        this.setConfig("report_format", "full");
-        if (this.getConfig().getPHPCSConfig().isShowWarningsEnabled()) {
-            this.setConfig("show_warnings", "1");
-        } else {
-            this.setConfig("show_warnings", "0");
-        }
-        this.setConfig("severity", this.getConfig().getPHPCSConfig().getErrorSeverityLevel().toString());
-        this.setConfig("error_severity", this.getConfig().getPHPCSConfig().getErrorSeverityLevel().toString());
-        this.setConfig("error_warning", this.getConfig().getPHPCSConfig().getWarningSeverityLevel().toString());
-    }
-
-    public showPHPCSVersion(): void {
-        this.checkIfEnabled();
-        const phpExecutablePath = this.getPluginPHPExecutablePath();
-        this.log("PHP Executable Path: " + phpExecutablePath, null, 0);
-        const phpCSExecutablePath = this.getToolExecutablePath;
-        this.log("PHPCS Executable Path: " + phpCSExecutablePath, null, 0);
-        this.execute(phpExecutablePath + " -v", false);
-        const command = this.getExceuteBaseCommand() + " --version";
-        this.execute(command, true);
-    }
-
-    public async showPHPCSInstalledCodingStandards(): Promise<void> {
-        let phpcsCommand = this.getExceuteBaseCommand();
-        phpcsCommand += " -i";
-        await this.execute(phpcsCommand);
-    }
-
-    public phpCSCurrentDocument(): void {
-        this.phpCSDocument(this.getCurrentlyOpenTabDocumentPath());
-    }
-
-    public async phpCSDocument(filePath: string): Promise<void> {
-        let phpcsCommand = this.getExceuteBaseCommand();
-        phpcsCommand += " --standard=" + this.getConfig().getPHPCSConfig().getStandard() + " ";
-        phpcsCommand += "--no-colors ";
-        phpcsCommand += filePath;
-        await this.execute(phpcsCommand);
+        this.initializer.init();
     }
 
     async setConfig(name: string, value: string): Promise<void> {
@@ -105,5 +68,13 @@ export default class PHPCS extends PluginAbstract {
             return this.getConfig().getPHPCSConfig().isEnabled();
         }
         return false;
+    }
+
+    public getShowInfo(): ShowInfo {
+        return this.showInfo;
+    }
+
+    public getDocumentActions(): DocumentActions {
+        return this.documentActions;
     }
 }
