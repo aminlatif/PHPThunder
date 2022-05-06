@@ -19,41 +19,55 @@ export default class Initializer {
     }
 
     public getCommandDisposables(): vscode.Disposable[] {
-        const commandDisposables: vscode.Disposable[] =[];
+        const commandDisposables: vscode.Disposable[] = [];
 
-        const showPHPCBFVersionCommandDisposable: vscode.Disposable = vscode.commands.registerCommand("phpthunder.showPHPCBFVersion", () => {
-            this.plugin.getShowInfo().showPHPCBFVersion();
-        });
+        const showPHPCBFVersionCommandDisposable: vscode.Disposable = vscode.commands.registerCommand(
+            "phpthunder.showPHPCBFVersion",
+            () => {
+                this.plugin.getShowInfo().showPHPCBFVersion();
+            }
+        );
         commandDisposables.push(showPHPCBFVersionCommandDisposable);
 
-        const showPHPCBFInstalledCodingStandardsCommandDisposable: vscode.Disposable = vscode.commands.registerCommand("phpthunder.showPHPCBFInstalledCodingStandards", () => {
-            this.plugin.getShowInfo().showPHPBFInstalledCodingStandards();
-        });
+        const showPHPCBFInstalledCodingStandardsCommandDisposable: vscode.Disposable = vscode.commands.registerCommand(
+            "phpthunder.showPHPCBFInstalledCodingStandards",
+            () => {
+                this.plugin.getShowInfo().showPHPBFInstalledCodingStandards();
+            }
+        );
         commandDisposables.push(showPHPCBFInstalledCodingStandardsCommandDisposable);
 
-        const phpcbfDocumentCommandDisposable: vscode.Disposable = vscode.commands.registerCommand("phpthunder.phpcbfDocument", () => {
-            this.plugin.getDocumentActions().runPHPCBFOnCurrentDocument();
-        });
+        const phpcbfDocumentCommandDisposable: vscode.Disposable = vscode.commands.registerCommand(
+            "phpthunder.phpcbfDocument",
+            () => {
+                this.plugin.getDocumentActions().runPHPCBFOnCurrentDocument();
+            }
+        );
         commandDisposables.push(phpcbfDocumentCommandDisposable);
 
         return commandDisposables;
     }
 
     public getFormattersDisposables(): vscode.Disposable[] {
-        const formattersDisposables: vscode.Disposable[] =[];
+        const formattersDisposables: vscode.Disposable[] = [];
 
-        const documentFormattingEditProvider: DocumentFormattingEditProvider = {
-            provideDocumentFormattingEdits: (
-                document: vscode.TextDocument,
-                options: vscode.FormattingOptions,
-                token: vscode.CancellationToken
-            ) => {
-                return this.plugin.getFormatActions().format(document, options, token);
-            },
-        };
-        const documentFormattingEditProviderDisposable: vscode.Disposable =
-            vscode.languages.registerDocumentFormattingEditProvider({language: "php"}, documentFormattingEditProvider);
-        formattersDisposables.push(documentFormattingEditProviderDisposable);
+        if (this.plugin.getConfig().getFormatConfig().getPhpFormatter() === "phpcbf") {
+            const documentFormattingEditProvider: DocumentFormattingEditProvider = {
+                provideDocumentFormattingEdits: (
+                    document: vscode.TextDocument,
+                    options: vscode.FormattingOptions,
+                    token: vscode.CancellationToken
+                ) => {
+                    return this.plugin.getFormatActions().format(document, options, token);
+                },
+            };
+            const documentFormattingEditProviderDisposable: vscode.Disposable =
+                vscode.languages.registerDocumentFormattingEditProvider(
+                    { language: "php" },
+                    documentFormattingEditProvider
+                );
+            formattersDisposables.push(documentFormattingEditProviderDisposable);
+        }
 
         return formattersDisposables;
     }

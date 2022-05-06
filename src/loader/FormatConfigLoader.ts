@@ -13,6 +13,7 @@ export default class FormatConfigLoader extends ConfigLoaderAbstract {
         formatConfig.setFormatOnBracketEnabled(workspaceConfiguration.get("format.onBracket", false));
         formatConfig.setFormatOnSemicolonEnabled(workspaceConfiguration.get("format.onSemicolon", false));
         formatConfig.setFormatHtmlEnabled(workspaceConfiguration.get("format.formatHtml", true));
+        formatConfig.setPhpFormatter(workspaceConfiguration.get("format.phpFormatter", "phpcbf"));
 
         formatConfig.lock();
         return formatConfig;

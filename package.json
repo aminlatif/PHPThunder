@@ -137,6 +137,21 @@
 						"default": true,
 						"description": "Format HTML.",
 						"order": 60
+					},
+					"phpthunder.format.phpformatter": {
+						"Title": "PHP Formatter",
+						"scope": "resource",
+						"type": "string",
+						"enum": [
+							"none",
+							"phpcbf",
+							"php-cs-fixer",
+							"phpfmt",
+							"chain"
+						],
+						"default": "phpcbf",
+						"description": "PHP Formatter.",
+						"order": 70
 					}
 				}
 			},

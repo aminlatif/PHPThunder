@@ -6,6 +6,7 @@ export default class FormatConfig extends ConfigAbstract {
     private formatOnBracketEnabled: boolean = false;
     private formatOnSemicolonEnabled: boolean = false;
     private formatHtmlEnabled: boolean = true;
+    private phpFormatter: string = "phpcbf";
 
     public setDocumentFormattingProviderEnabled(documentFormattingProviderEnabled: boolean): FormatConfig {
         return this.setData("documentFormattingProviderEnabled", documentFormattingProviderEnabled) as FormatConfig;
@@ -45,5 +46,13 @@ export default class FormatConfig extends ConfigAbstract {
 
     public isFormatHtmlEnabled(): boolean {
         return this.formatHtmlEnabled;
+    }
+
+    public setPhpFormatter(phpFormatter: string): FormatConfig {
+        return this.setData("phpFormatter", phpFormatter) as FormatConfig;
+    }
+
+    public getPhpFormatter(): string {
+        return this.phpFormatter;
     }
 }
