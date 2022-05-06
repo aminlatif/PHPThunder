@@ -138,7 +138,7 @@
 						"description": "Format HTML.",
 						"order": 60
 					},
-					"phpthunder.format.phpformatter": {
+					"phpthunder.format.phpFormatter": {
 						"Title": "PHP Formatter",
 						"scope": "resource",
 						"type": "string",
@@ -150,8 +150,25 @@
 							"chain"
 						],
 						"default": "phpcbf",
-						"description": "PHP Formatter.",
+						"description": "PHP formatter.",
 						"order": 70
+					},
+					"phpthunder.format.phpFormatterChain": {
+						"Title": "PHP Formatter Chain",
+						"scope": "resource",
+						"type": "array",
+						"items": {
+							"type": "string",
+							"title": "PHP Formatter Name.",
+							"enum": [
+								"phpcbf",
+								"php-cs-fixer",
+								"phpfmt"
+							]
+						},
+						"default": ["php-cs-fixer", "phpcbf"],
+						"description": "PHP formatter chain.",
+						"order": 80
 					}
 				}
 			},
@@ -480,6 +497,10 @@
 			{
 				"command": "phpthunder.showToolsPHPVersion",
 				"title": "PHPThunder: Tools PHP Version"
+			},
+			{
+				"command": "phpthunder.showPHPFormatterChain",
+				"title": "PHPThunder: PHP Formatter Chain"
 			},
 			{
 				"command": "phpthunder.showPHPCSVersion",

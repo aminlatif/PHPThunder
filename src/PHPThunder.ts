@@ -10,9 +10,26 @@ export default class PHPThunder {
     constructor(extensionContext: vscode.ExtensionContext) {
         console.log("Activating extension: PHPThunder...");
         this.extensionContext = extensionContext;
-        this.state = StateLoader.load(this.extensionContext);
+        this.state = this.initiate();
+        this.registerSubscriptions();
         this.state.getLogService().log("PHPThunder extension activated.", null, 0);
         this.state.getPluginService().initPlugins();
+    }
+
+    initiate(): State {
+        console.log("Initiating PHPThunder...");
+        this.state = StateLoader.load(this.extensionContext);
+        this.state.getLogService().log("PHPThunder extension initiated.", null, 0);
+        return this.state;
+    }
+
+    registerSubscriptions(): void {
+        this.extensionContext.subscriptions.push(
+            vscode.workspace.onDidChangeConfiguration((e) => {
+                this.state.getLogService().log("PHPThunder extension configuration changed.", null, 0, true);
+                this.initiate();
+            })
+        );
     }
 
     public getState(): State {
