@@ -1,138 +1,49 @@
-import PHPCBFConfig from "@plugin/PHPCBF/PHPCBFConfig";
-import PHPCSConfig from "@plugin/PHPCS/PHPCSConfig";
-import PHPCSFixerConfig from "@plugin/PHPCSFixer/PHPCSFixerConfig";
-import PHPFMTConfig from "@plugin/PHPFMT/PHPFMTConfig";
+import ConfigAbstract from "@interface/ConfigAbstract";
 
-export default class FormatConfig {
-    private enable: boolean;
-    private onSave: boolean;
-    private onBracket: boolean;
-    private onSemicolon: boolean;
-    private formatHtml: boolean;
-    private documentFormattingProvider: boolean;
-    private standard: string;
-    private autoConfigSearch: boolean;
-    private ignorePatterns: string[];
-    private errorSeverity: number;
-    private warningSeverity: number;
-    private showWarnings: boolean;
-    private showSources: boolean;
-    private traceServer: string;
+export default class FormatConfig extends ConfigAbstract {
+    private documentFormattingProviderEnabled: boolean = true;
+    private formatOnSaveEnabled: boolean = true;
+    private formatOnBracketEnabled: boolean = false;
+    private formatOnSemicolonEnabled: boolean = false;
+    private formatHtmlEnabled: boolean = true;
 
-    private phpcsConfig: PHPCSConfig;
-    private phpcbfConfig: PHPCBFConfig;
-    private phpcsfixerConfig: PHPCSFixerConfig;
-    private phpfmtConfig: PHPFMTConfig;
-
-    constructor(
-        enable: boolean,
-        onSave: boolean,
-        onBracket: boolean,
-        onSemicolon: boolean,
-        formatHtml: boolean,
-        documentFormattingProvider: boolean,
-        standard: string,
-        autoConfigSearch: boolean,
-        ignorePatterns: string[],
-        errorSeverity: number,
-        warningSeverity: number,
-        showWarnings: boolean,
-        showSources: boolean,
-        traceServer: string,
-        phpcsConfig: PHPCSConfig,
-        phpcbfConfig: PHPCBFConfig,
-        phpcsfixerConfig: PHPCSFixerConfig,
-        phpfmtConfig: PHPFMTConfig
-    ) {
-        this.enable = enable;
-        this.onSave = onSave;
-        this.onBracket = onBracket;
-        this.onSemicolon = onSemicolon;
-        this.formatHtml = formatHtml;
-        this.documentFormattingProvider = documentFormattingProvider;
-        this.standard = standard;
-        this.autoConfigSearch = autoConfigSearch;
-        this.ignorePatterns = ignorePatterns;
-        this.errorSeverity = errorSeverity;
-        this.warningSeverity = warningSeverity;
-        this.showWarnings = showWarnings;
-        this.showSources = showSources;
-        this.traceServer = traceServer;
-        this.phpcsConfig = phpcsConfig;
-        this.phpcbfConfig = phpcbfConfig;
-        this.phpcsfixerConfig = phpcsfixerConfig;
-        this.phpfmtConfig = phpfmtConfig;
+    public setDocumentFormattingProviderEnabled(documentFormattingProviderEnabled: boolean): FormatConfig {
+        return this.setData("documentFormattingProviderEnabled", documentFormattingProviderEnabled) as FormatConfig;
     }
 
-    public getEnable(): boolean {
-        return this.enable;
+    public isDocumentFormattingProviderEnabled(): boolean {
+        return this.documentFormattingProviderEnabled;
     }
 
-    public getOnSave(): boolean {
-        return this.onSave;
+    public setFormatOnSaveEnabled(formatOnSaveEnabled: boolean): FormatConfig {
+        return this.setData("formatOnSaveEnabled", formatOnSaveEnabled) as FormatConfig;
     }
 
-    public getOnBracket(): boolean {
-        return this.onBracket;
+    public isFormatOnSaveEnabled(): boolean {
+        return this.formatOnSaveEnabled;
     }
 
-    public getOnSemicolon(): boolean {
-        return this.onSemicolon;
+    public setFormatOnBracketEnabled(formatOnBracketEnabled: boolean): FormatConfig {
+        return this.setData("formatOnBracketEnabled", formatOnBracketEnabled) as FormatConfig;
     }
 
-    public getFormatHtml(): boolean {
-        return this.formatHtml;
+    public isFormatOnBracketEnabled(): boolean {
+        return this.formatOnBracketEnabled;
     }
 
-    public getDocumentFormattingProvider(): boolean {
-        return this.documentFormattingProvider;
+    public setFormatOnSemicolonEnabled(formatOnSemicolonEnabled: boolean): FormatConfig {
+        return this.setData("formatOnSemicolonEnabled", formatOnSemicolonEnabled) as FormatConfig;
     }
 
-    public getStandard(): string {
-        return this.standard;
+    public isFormatOnSemicolonEnabled(): boolean {
+        return this.formatOnSemicolonEnabled;
     }
 
-    public getAutoConfigSearch(): boolean {
-        return this.autoConfigSearch;
+    public setFormatHtmlEnabled(formatHtmlEnabled: boolean): FormatConfig {
+        return this.setData("formatHtmlEnabled", formatHtmlEnabled) as FormatConfig;
     }
 
-    public getIgnorePatterns(): string[] {
-        return this.ignorePatterns;
-    }
-
-    public getErrorSeverity(): number {
-        return this.errorSeverity;
-    }
-
-    public getWarningSeverity(): number {
-        return this.warningSeverity;
-    }
-
-    public getShowWarnings(): boolean {
-        return this.showWarnings;
-    }
-
-    public getShowSources(): boolean {
-        return this.showSources;
-    }
-
-    public getTraceServer(): string {
-        return this.traceServer;
-    }
-
-    public getPhpcsConfig(): PHPCSConfig {
-        return this.phpcsConfig;
-    }
-
-    public getPhpcbfConfig(): PHPCBFConfig {
-        return this.phpcbfConfig;
-    }
-
-    public getPhpcsfixerConfig(): PHPCSFixerConfig {
-        return this.phpcsfixerConfig;
-    }
-
-    public getPhpfmtConfig(): PHPFMTConfig {
-        return this.phpfmtConfig;
+    public isFormatHtmlEnabled(): boolean {
+        return this.formatHtmlEnabled;
     }
 }

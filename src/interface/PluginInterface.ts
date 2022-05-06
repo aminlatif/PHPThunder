@@ -6,7 +6,7 @@ import Config from "@model/Config";
 
 import { LogLevel } from "@enum/logLevel";
 
-export interface IPlugin {
+export interface PluginInterface {
     registerSubscriptions(): void;
     registerSubscriptionsTool(): void;
     init(): void;
@@ -17,13 +17,8 @@ export interface IPlugin {
     setConfig(name: string, value: string): Promise<void>;
     execute(command: string): Promise<boolean>;
     getCurrentlyOpenTabDocumentPath(): string;
-    getStandard(): string;
-    getErrorSeverity(): number;
-    getWarningSeverity(): number;
-    getShowWarnings(): boolean;
-    getShowSources(): boolean;
     isEnabled(): boolean;
-    provideDocumentFormatting(): boolean;
+    isDocumentFormattingProviderEnabled(): boolean;
     getTempDirectory(): string;
     isDebugEnabled(): boolean;
     log(message: string, logObject: Object | null, severity: LogLevel | number): void;

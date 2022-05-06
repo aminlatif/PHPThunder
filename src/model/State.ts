@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 import BaseService from "@service/BaseService";
+import CommandService from "@service/CommandService";
 import ConfigService from "@service/ConfigService";
 import LogService from "@service/LogService";
 import PluginService from "@service/PluginService";
@@ -8,12 +9,13 @@ import PluginService from "@service/PluginService";
 export default class State {
     private extensionContext: vscode.ExtensionContext;
 
-    private workspaceConfiguration: vscode.WorkspaceConfiguration;
+    private workspaceConfiguration: vscode.WorkspaceConfiguration | null = null;
 
-    private baseService: BaseService;
-    private configService: ConfigService;
-    private logService: LogService;
-    private pluginService: PluginService;
+    private baseService: BaseService | null = null;
+    private commandService: CommandService | null = null;
+    private configService: ConfigService | null = null;
+    private logService: LogService | null = null;
+    private pluginService: PluginService | null = null;
 
     private activeTextEditorDocumentUri: vscode.Uri | null = null;
 
@@ -32,7 +34,10 @@ export default class State {
     }
 
     public getWorkspaceConfiguration(): vscode.WorkspaceConfiguration {
-        return this.workspaceConfiguration;
+        if (this.workspaceConfiguration) {
+            return this.workspaceConfiguration;
+        }
+        throw new Error("Workspace configuration is not set");
     }
 
     public setBaseService(baseService: BaseService): void {
@@ -40,7 +45,21 @@ export default class State {
     }
 
     public getBaseService(): BaseService {
-        return this.baseService;
+        if (this.baseService) {
+            return this.baseService;
+        }
+        throw new Error("Base service is not set");
+    }
+
+    public setCommandService(commandService: CommandService): void {
+        this.commandService = commandService;
+    }
+
+    public getCommandService(): CommandService {
+        if (this.commandService) {
+            return this.commandService;
+        }
+        throw new Error("Command service is not set");
     }
 
     public setConfigService(configService: ConfigService): void {
@@ -48,7 +67,10 @@ export default class State {
     }
 
     public getConfigService(): ConfigService {
-        return this.configService;
+        if (this.configService) {
+            return this.configService;
+        }
+        throw new Error("Config service is not set");
     }
 
     public setLogService(logService: LogService): void {
@@ -56,7 +78,10 @@ export default class State {
     }
 
     public getLogService(): LogService {
-        return this.logService;
+        if (this.logService) {
+            return this.logService;
+        }
+        throw new Error("Log service is not set");
     }
 
     public setPluginService(pluginService: PluginService): void {
@@ -64,7 +89,10 @@ export default class State {
     }
 
     public getPluginService(): PluginService {
-        return this.pluginService;
+        if (this.pluginService) {
+            return this.pluginService;
+        }
+        throw new Error("Plugin service is not set");
     }
 
     public setActiveTextEditorDocumentUri(activeTextEditorDocumentUri: vscode.Uri | null): void {

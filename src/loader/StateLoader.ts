@@ -2,14 +2,15 @@ import * as vscode from "vscode";
 
 import State from "@model/State";
 import BaseService from "@service/BaseService";
+import CommandService from "@service/CommandService";
 import ConfigService from "@service/ConfigService";
 import LogService from "@service/LogService";
 import PluginService from "@service/PluginService";
 
-import ConfigFactory from "@model/factory/ConfigFactory";
+import ConfigLoader from "@loader/ConfigLoader";
 
-export default class StateFactory {
-    public static createState(extensionContext: vscode.ExtensionContext): State {
+export default class StateLoader {
+    public static load(extensionContext: vscode.ExtensionContext): State {
         console.log("Loading PHPThunder state...");
 
         const state = new State(extensionContext);
@@ -29,9 +30,9 @@ export default class StateFactory {
 
         state.getLogService().log("Loading configuration...", null, 0);
         state.setWorkspaceConfiguration(vscode.workspace.getConfiguration("phpthunder", state.getActiveTextEditorDocumentUri()));
-        state.getLogService().log("Document Workspace Folder: " +(ConfigFactory.getDocumentWorkspaceFolder() as string));
-        state.setConfigService(new ConfigService(ConfigFactory.createConfig(state.getWorkspaceConfiguration())));
-        state.setDebug(state.getConfigService().getConfig().getDebug());
+        state.getLogService().log("Document Workspace Folder: " +(ConfigLoader.getDocumentWorkspaceFolder() as string));
+        state.setConfigService(new ConfigService(ConfigLoader.load(state.getWorkspaceConfiguration())));
+        state.setDebug(state.getConfigService().getConfig().isDebugEnabled());
         state.getLogService().setDebug(state.getDebug());
         state.getLogService().log("Debug mode: " + state.getDebug(), null, 0);
         state.getLogService().log("Config: ", state.getConfigService().getConfig());
@@ -40,6 +41,10 @@ export default class StateFactory {
         state.getLogService().log("Loading base service...", null, 0);
         state.setBaseService(new BaseService(state));
         state.getLogService().log("Base service loaded.", null, 0);
+
+        state.getLogService().log("Loading command service...", null, 0);
+        state.setCommandService(new CommandService(state));
+        state.getLogService().log("Command service loaded.", null, 0);
 
         state.getLogService().log("Loading plugin service...", null, 0);
         state.setPluginService(new PluginService(state));

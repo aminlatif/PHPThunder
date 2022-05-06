@@ -11,9 +11,9 @@ import {
 import * as childProcess from "child_process";
 import * as path from "path";
 
-import Plugin from "@plugin/Plugin";
+import PluginAbstract from "@interface/PluginAbstract";
 
-export default class PHPCS extends Plugin {
+export default class PHPCS extends PluginAbstract {
     public pluginName: string = "PHPCS";
 
     public registerSubscriptionsTool(): void {
@@ -38,37 +38,25 @@ export default class PHPCS extends Plugin {
 
     public initTool(): void {
         this.setConfig("report_format", "full");
-        if (this.getShowWarnings()) {
+        if (this.getConfig().getPHPCSConfig().isShowWarningsEnabled()) {
             this.setConfig("show_warnings", "1");
         } else {
             this.setConfig("show_warnings", "0");
         }
-        this.setConfig("severity", this.getErrorSeverity().toString());
-        this.setConfig("error_severity", this.getErrorSeverity().toString());
-        this.setConfig("error_warning", this.getWarningSeverity().toString());
+        this.setConfig("severity", this.getConfig().getPHPCSConfig().getErrorSeverityLevel().toString());
+        this.setConfig("error_severity", this.getConfig().getPHPCSConfig().getErrorSeverityLevel().toString());
+        this.setConfig("error_warning", this.getConfig().getPHPCSConfig().getWarningSeverityLevel().toString());
     }
 
     public showPHPCSVersion(): void {
-        if (!this.getConfig().getFormatConfig().getPhpcsConfig().getEnable()) {
-            vscode.window.showWarningMessage("PHPThunder: phpcs is disabled.");
-            return;
-        }
-        const phpExecutablePath = this.getConfig().getPhpExecutablePath();
+        this.checkIfEnabled();
+        const phpExecutablePath = this.getPluginPHPExecutablePath();
         this.log("PHP Executable Path: " + phpExecutablePath, null, 0);
-        const phpCSExecutablePath = this.getConfig().getFormatConfig().getPhpcsConfig().getExecutablePath();
+        const phpCSExecutablePath = this.getToolExecutablePath;
         this.log("PHPCS Executable Path: " + phpCSExecutablePath, null, 0);
-        childProcess.exec(phpExecutablePath + " " + phpCSExecutablePath + " --version", (err, stdout, stderr) => {
-            if (err) {
-                vscode.window.showErrorMessage(err.toString());
-                this.log(err.toString(), null, 2);
-                this.log(stderr.toString(), null, 2);
-                this.log(stdout.toString(), null, 2);
-                return;
-            }
-            const message = "PHPCS version: " + stdout.toString();
-            vscode.window.showInformationMessage(message);
-            this.log(message, null, 0);
-        });
+        this.execute(phpExecutablePath + " -v", false);
+        const command = this.getExceuteBaseCommand() + " --version";
+        this.execute(command, true);
     }
 
     public async showPHPCSInstalledCodingStandards(): Promise<void> {
@@ -83,7 +71,7 @@ export default class PHPCS extends Plugin {
 
     public async phpCSDocument(filePath: string): Promise<void> {
         let phpcsCommand = this.getExceuteBaseCommand();
-        phpcsCommand += " --standard=" + this.getStandard() + " ";
+        phpcsCommand += " --standard=" + this.getConfig().getPHPCSConfig().getStandard() + " ";
         phpcsCommand += "--no-colors ";
         phpcsCommand += filePath;
         await this.execute(phpcsCommand);
@@ -95,12 +83,27 @@ export default class PHPCS extends Plugin {
         await this.execute(phpcsConfig);
     }
 
+    public getPluginPHPExecutablePath(): string {
+        const phpExecutablePath = this.getConfig().getPHPCSConfig().getPHPExecutablePath();
+        if (phpExecutablePath) {
+            return phpExecutablePath;
+        }
+        return this.getToolsPHPExecutablePath();
+    }
+
     public getToolExecutablePath(): string {
-        const phpCSExecutablePath = this.getConfig().getFormatConfig().getPhpcsConfig().getExecutablePath();
+        const phpCSExecutablePath = this.getConfig().getPHPCSConfig().getExecutablePath();
         if (this.isEnabled() && phpCSExecutablePath) {
             return phpCSExecutablePath;
         }
         vscode.window.showWarningMessage("PHPThunder: phpcs is disabled.");
         throw new Error("PHPThunder: phpcs is disabled.");
+    }
+
+    public isEnabled(): boolean {
+        if (super.isEnabled()) {
+            return this.getConfig().getPHPCSConfig().isEnabled();
+        }
+        return false;
     }
 }

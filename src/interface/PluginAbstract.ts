@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as childProcess from "child_process";
 import * as os from "os";
 
-import { IPlugin } from "./IPlugin";
+import { PluginInterface } from "./PluginInterface";
 
 import State from "@model/State";
 import ConfigService from "@service/ConfigService";
@@ -12,7 +12,7 @@ import Config from "@model/Config";
 
 import { LogLevel } from "@enum/logLevel";
 
-export default abstract class Plugin implements IPlugin {
+export default abstract class PluginAbstract implements PluginInterface {
     private state: State;
     private extensionContext: vscode.ExtensionContext;
     public pluginName: string = "Plugin";
@@ -48,39 +48,39 @@ export default abstract class Plugin implements IPlugin {
     public abstract initTool(): void;
 
     public getExceuteBaseCommand(): string {
-        return this.getPHPExecutablePath() + " " + this.getToolExecutablePath() + " ";
+        return this.getPluginPHPExecutablePath() + " " + this.getToolExecutablePath() + " ";
+    }
+
+    public getPluginPHPExecutablePath(): string {
+        return this.getPHPExecutablePath();
+    }
+
+    public getToolsPHPExecutablePath(): string {
+        const phpExecutablePath = this.getConfig().getToolsConfig().getPHPExecutablePath();
+        if (phpExecutablePath) {
+            return phpExecutablePath;
+        }
+
+        return this.getPHPExecutablePath();
     }
 
     public getPHPExecutablePath(): string {
-        const phpExecutablePath = this.getConfig().getPhpExecutablePath();
-        if (this.getConfig().isEnable() && phpExecutablePath) {
-            return phpExecutablePath;
+        if (this.getConfig().isEnabled()) {
+            const phpExecutablePath = this.getConfig().getPHPExecutablePath();
+            if (phpExecutablePath) {
+                return phpExecutablePath;
+            }
         }
         throw new Error("PHPThunder is not enabled.");
     }
 
-    public getToolExecutablePath(): string {
-        return "";
-    }
+    public abstract getToolExecutablePath(): string;
 
     public async setConfig(name: string, value: string): Promise<void> {}
 
-    public async execute(command: string): Promise<boolean> {
-        this.log("Command: " + command);
-        return new Promise((resolve, reject) => {
-            childProcess.exec(command, (err, stdout, stderr) => {
-                if (err && err.code !== 1) {
-                    vscode.window.showErrorMessage(err.toString() + "\n" + stderr.toString());
-                    this.log("", err, 2);
-                    this.log("", stderr, 2);
-                    this.log("OUT: ", stdout, 0);
-                    reject(false);
-                    return;
-                }
-                this.log("", stdout, 0);
-                resolve(true);
-            });
-        });
+    public async execute(command: string, popup: boolean = false): Promise<boolean> {
+        this.log("Ready to Execute Command.", null, 0);
+        return this.state.getCommandService().execute(command, popup);
     }
 
     public getCurrentlyOpenTabDocumentPath(): string {
@@ -91,32 +91,18 @@ export default abstract class Plugin implements IPlugin {
         }
     }
 
-    public getStandard(): string {
-        return this.getConfig().getFormatConfig().getStandard();
-    }
-
-    public getErrorSeverity(): number {
-        return this.getConfig().getFormatConfig().getErrorSeverity();
-    }
-
-    public getWarningSeverity(): number {
-        return this.getConfig().getFormatConfig().getWarningSeverity();
-    }
-
-    public getShowWarnings(): boolean {
-        return this.getConfig().getFormatConfig().getShowWarnings();
-    }
-
-    public getShowSources(): boolean {
-        return this.getConfig().getFormatConfig().getShowSources();
+    public checkIfEnabled(): void {
+        if (!this.isEnabled()) {
+            throw new Error(this.pluginName + " is disabled.");
+        }
     }
 
     public isEnabled(): boolean {
-        return this.getConfig().getFormatConfig().getEnable();
+        return this.getConfig().isEnabled();
     }
 
-    public provideDocumentFormatting(): boolean {
-        return this.getConfig().getFormatConfig().getDocumentFormattingProvider();
+    public isDocumentFormattingProviderEnabled(): boolean {
+        return this.getConfig().getFormatConfig().isDocumentFormattingProviderEnabled();
     }
 
     public getTempDirectory(): string {
@@ -124,11 +110,16 @@ export default abstract class Plugin implements IPlugin {
     }
 
     public isDebugEnabled(): boolean {
-        return this.getConfig().getDebug();
+        return this.getConfig().isDebugEnabled();
     }
 
-    public log(message: string, logObject: Object | null = null, severity: LogLevel | number = LogLevel.debug): void {
-        this.getLogService().log(this.getPluginName() + ": " + message, logObject, severity);
+    public log(
+        message: string,
+        logObject: Object | null = null,
+        severity: LogLevel | number = LogLevel.debug,
+        popup: boolean = false
+    ): void {
+        this.getLogService().log(this.getPluginName() + ": " + message, logObject, severity, popup);
     }
 
     public getConfig(): Config {

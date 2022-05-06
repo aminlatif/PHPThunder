@@ -32,6 +32,8 @@ const extensionConfig = {
         alias: {
             "@cmt": path.resolve(__dirname, "src"),
             "@enum": path.resolve(__dirname, "src/enum"),
+            "@interface": path.resolve(__dirname, "src/interface"),
+            "@loader": path.resolve(__dirname, "src/loader"),
             "@model": path.resolve(__dirname, "src/model"),
             "@plugin": path.resolve(__dirname, "src/plugin"),
             "@service": path.resolve(__dirname, "src/service"),

@@ -1,9 +1,9 @@
 import * as vscode from "vscode";
 import * as childProcess from "child_process";
 
-import Plugin from "@plugin/Plugin";
+import PluginAbstract from "@interface/PluginAbstract";
 
-export default class PHPCSFixer extends Plugin {
+export default class PHPCSFixer extends PluginAbstract {
     public pluginName: string = "PHPCSFixer";
 
     public registerSubscriptionsTool(): void {
@@ -23,26 +23,14 @@ export default class PHPCSFixer extends Plugin {
     public initTool(): void {}
 
     public showPHPCSFixerVersion(): void {
-        if (!this.getConfig().getFormatConfig().getPhpcsfixerConfig().getEnable()) {
-            vscode.window.showWarningMessage("PHPThunder: php-cs-fixer is disabled.");
-            return;
-        }
-        const phpExecutablePath = this.getConfig().getPhpExecutablePath();
+        this.checkIfEnabled();
+        const phpExecutablePath = this.getPluginPHPExecutablePath();
         this.log("PHP Executable Path: " + phpExecutablePath, null, 0);
-        const phpCSFixerExecutablePath = this.getConfig().getFormatConfig().getPhpcsfixerConfig().getExecutablePath();
-        this.log("PHP-CS-Fixer Executable Path: " + phpCSFixerExecutablePath, null, 0);
-        childProcess.exec(phpExecutablePath + " " + phpCSFixerExecutablePath + " --version", (err, stdout, stderr) => {
-            if (err) {
-                vscode.window.showErrorMessage(err.toString());
-                this.log(err.toString(), null, 2);
-                this.log(stderr.toString(), null, 2);
-                this.log(stdout.toString(), null, 2);
-                return;
-            }
-            const message = "PHP-CS-Fixer version: " + stdout.toString();
-            vscode.window.showInformationMessage(message);
-            this.log(message, null, 0);
-        });
+        const phpCSFixerExecutablePath = this.getToolExecutablePath;
+        this.log("PHPCSFixer Executable Path: " + phpCSFixerExecutablePath, null, 0);
+        this.execute(phpExecutablePath + " -v", false);
+        const command = this.getExceuteBaseCommand() + " --version";
+        this.execute(command, true);
     }
 
     public phpCSFixerCurrentDocument(): void {
@@ -51,7 +39,7 @@ export default class PHPCSFixer extends Plugin {
 
     public async phpCSFixerDocument(filePath: string): Promise<void> {
         let phpcsfixerCommand = this.getExceuteBaseCommand();
-        phpcsfixerCommand += " --standard=" + this.getStandard() + " ";
+        // phpcsfixerCommand += " --standard=" + this.getConfig().getPHPCSFixerConfig().getStandard() + " ";
         phpcsfixerCommand += "--no-colors ";
         phpcsfixerCommand += filePath;
         await this.execute(phpcsfixerCommand);
@@ -63,8 +51,16 @@ export default class PHPCSFixer extends Plugin {
         await this.execute(phpcsConfig);
     }
 
+    public getPluginPHPExecutablePath(): string {
+        const phpExecutablePath = this.getConfig().getPHPCSFixerConfig().getPHPExecutablePath();
+        if (phpExecutablePath) {
+            return phpExecutablePath;
+        }
+        return this.getToolsPHPExecutablePath();
+    }
+
     public getToolExecutablePath(): string {
-        const phpCSFixerExecutablePath = this.getConfig().getFormatConfig().getPhpcsfixerConfig().getExecutablePath();
+        const phpCSFixerExecutablePath = this.getConfig().getPHPCSFixerConfig().getExecutablePath();
         if (this.isEnabled() && phpCSFixerExecutablePath) {
             return phpCSFixerExecutablePath;
         }
@@ -74,7 +70,7 @@ export default class PHPCSFixer extends Plugin {
 
     public isEnabled(): boolean {
         if (super.isEnabled()) {
-            return this.getConfig().getFormatConfig().getPhpcsfixerConfig().getEnable();
+            return this.getConfig().getPHPCSFixerConfig().isEnabled();
         }
         return false;
     }

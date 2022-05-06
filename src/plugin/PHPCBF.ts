@@ -2,9 +2,9 @@ import * as vscode from "vscode";
 import * as childProcess from "child_process";
 import * as fs from "fs";
 
-import Plugin from "@plugin/Plugin";
+import PluginAbstract from "@interface/PluginAbstract";
 
-export default class PHPCBF extends Plugin {
+export default class PHPCBF extends PluginAbstract {
     public pluginName: string = "PHPCBF";
 
     public registerSubscriptionsTool(): void {
@@ -52,37 +52,25 @@ export default class PHPCBF extends Plugin {
 
     public initTool(): void {
         this.setConfig("report_format", "full");
-        if (this.getShowWarnings()) {
+        if (this.getConfig().getPHPCBFConfig().isShowWarningsEnabled()) {
             this.setConfig("show_warnings", "1");
         } else {
             this.setConfig("show_warnings", "0");
         }
-        this.setConfig("severity", this.getErrorSeverity().toString());
-        this.setConfig("error_severity", this.getErrorSeverity().toString());
-        this.setConfig("error_warning", this.getWarningSeverity().toString());
+        this.setConfig("severity", this.getConfig().getPHPCBFConfig().getErrorSeverityLevel().toString());
+        this.setConfig("error_severity", this.getConfig().getPHPCBFConfig().getErrorSeverityLevel().toString());
+        this.setConfig("error_warning", this.getConfig().getPHPCBFConfig().getWarningSeverityLevel().toString());
     }
 
     public showPHPCBFVersion(): void {
-        if (!this.getConfig().getFormatConfig().getPhpcbfConfig().getEnable()) {
-            vscode.window.showWarningMessage("PHPThunder: phpcbf is disabled.");
-            return;
-        }
-        const phpExecutablePath = this.getConfig().getPhpExecutablePath();
+        this.checkIfEnabled();
+        const phpExecutablePath = this.getPluginPHPExecutablePath();
         this.log("PHP Executable Path: " + phpExecutablePath, null, 0);
-        const phpCBFExecutablePath = this.getConfig().getFormatConfig().getPhpcbfConfig().getExecutablePath();
+        const phpCBFExecutablePath = this.getToolExecutablePath;
         this.log("PHPCBF Executable Path: " + phpCBFExecutablePath, null, 0);
-        childProcess.exec(phpExecutablePath + " " + phpCBFExecutablePath + " --version", (err, stdout, stderr) => {
-            if (err) {
-                vscode.window.showErrorMessage(err.toString());
-                this.log(err.toString(), null, 2);
-                this.log(stderr.toString(), null, 2);
-                this.log(stdout.toString(), null, 2);
-                return;
-            }
-            const message = "PHPCBF version: " + stdout.toString();
-            vscode.window.showInformationMessage(message);
-            this.log(message, null, 0);
-        });
+        this.execute(phpExecutablePath + " -v", false);
+        const command = this.getExceuteBaseCommand() + " --version";
+        this.execute(command, true);
     }
 
     public async showPHPBFInstalledCodingStandards(): Promise<void> {
@@ -97,7 +85,7 @@ export default class PHPCBF extends Plugin {
 
     public async phpCBFDocument(filePath: string): Promise<void> {
         let phpcbfCommand = this.getExceuteBaseCommand();
-        phpcbfCommand += " --standard=" + this.getStandard() + " ";
+        phpcbfCommand += " --standard=" + this.getConfig().getPHPCBFConfig().getStandard() + " ";
         phpcbfCommand += "--no-colors ";
         phpcbfCommand += filePath;
         await this.execute(phpcbfCommand);
@@ -126,7 +114,7 @@ export default class PHPCBF extends Plugin {
         }
 
         phpcbfCommand += tempFileName + " ";
-        phpcbfCommand += " --standard=" + this.getStandard() + " ";
+        phpcbfCommand += " --standard=" + this.getConfig().getPHPCBFConfig().getStandard() + " ";
 
         const formatSuccess = await this.execute(phpcbfCommand);
 
@@ -141,8 +129,16 @@ export default class PHPCBF extends Plugin {
         await this.execute(phpcsConfig);
     }
 
+    public getPluginPHPExecutablePath(): string {
+        const phpExecutablePath = this.getConfig().getPHPCBFConfig().getPHPExecutablePath();
+        if (phpExecutablePath) {
+            return phpExecutablePath;
+        }
+        return this.getToolsPHPExecutablePath();
+    }
+
     public getToolExecutablePath(): string {
-        const phpCBFExecutablePath = this.getConfig().getFormatConfig().getPhpcbfConfig().getExecutablePath();
+        const phpCBFExecutablePath = this.getConfig().getPHPCBFConfig().getExecutablePath();
         if (this.isEnabled() && phpCBFExecutablePath) {
             return phpCBFExecutablePath;
         }
@@ -152,7 +148,7 @@ export default class PHPCBF extends Plugin {
 
     public isEnabled(): boolean {
         if (super.isEnabled()) {
-            return this.getConfig().getFormatConfig().getPhpcbfConfig().getEnable();
+            return this.getConfig().getPHPCBFConfig().isEnabled();
         }
         return false;
     }

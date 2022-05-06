@@ -12,9 +12,9 @@
 		"noUnusedLocals": false,
 		"noUnusedParameters": false,
 		"noImplicitThis": true,
-		"skipLibCheck": true,
-		"strictPropertyInitialization": false,
-		"strictNullChecks": false,
+		// "skipLibCheck": true,
+		// "strictPropertyInitialization": false,
+		// "strictNullChecks": false,
 		// "noImplicitReturns": false,
 		//
 		//
@@ -27,6 +27,12 @@
 		"paths": {
 			"@enum/*": [
 				"enum/*"
+			],
+			"@interface/*": [
+				"interface/*"
+			],
+			"@loader/*": [
+				"loader/*"
 			],
 			"@model/*": [
 				"model/*"

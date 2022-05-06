@@ -15,6 +15,9 @@
 		"type": "git",
 		"url": "https://github.com/aminlatif/PHPThunder"
 	},
+	"bugs": {
+		"url": "https://github.com/aminlatif/PHPThunder/issues"
+	},
 	"engines": {
 		"vscode": "^1.66.0"
 	},
@@ -38,6 +41,8 @@
 	"main": "./dist/extension.js",
 	"_moduleAliases": {
 		"@enum": "dist/enum",
+		"@interface": "dist/interface",
+		"@loader": "dist/loader",
 		"@model": "dist/model",
 		"@plugin": "dist/plugin",
 		"@service": "dist/service"
@@ -48,225 +53,410 @@
 				"id": "php"
 			}
 		],
-		"configuration": {
-			"title": "PHPThunder",
-			"type": "object",
-			"properties": {
-				"phpthunder.enable": {
-					"Title": "Enable PHPThunder",
-					"scope": "resource",
-					"type": "boolean",
-					"default": true,
-					"description": "",
-					"order": -3
-				},
-				"phpthunder.phpExecutablePath": {
-					"Title": "PHP Executable Path",
-					"scope": "resource",
-					"type": "string",
-					"default": "/usr/bin/php",
-					"description": "Points to the php exectuable",
-					"order": -2
-				},
-				"phpthunder.composerExecutablePath": {
-					"Title": "Composer Executable Path",
-					"scope": "resource",
-					"type": "string",
-					"default": "composer",
-					"description": "Points to the composer exectuable",
-					"order": -1
-				},
-				"phpthunder.debug": {
-					"scope": "resource",
-					"type": "boolean",
-					"default": false,
-					"description": "Control whether format debug is enabled.",
-					"order": 0
-				},
-				"phpthunder.composerJsonPath": {
-					"scope": "resource",
-					"type": "string",
-					"default": "composer.json",
-					"description": "The path to composer.json",
-					"order": 1
-				},
-				"phpthunder.format.enable": {
-					"scope": "resource",
-					"type": "boolean",
-					"default": true,
-					"description": "Control whether format debug is enabled.",
-					"order": 2
-				},
-				"phpthunder.format.onSave": {
-					"scope": "resource",
-					"type": "boolean",
-					"default": false,
-					"description": "Run PHP Code Beautifier and Fixer on save.",
-					"order": 3
-				},
-				"phpthunder.format.onBracket": {
-					"scope": "resource",
-					"type": "boolean",
-					"default": false,
-					"description": "when press down the key } auto fix the code in the brackets {}",
-					"order": 4
-				},
-				"phpthunder.format.onSemicolon": {
-					"scope": "resource",
-					"type": "boolean",
-					"default": false,
-					"description": "when press down the key ; auto fix the code at the current line",
-					"order": 5
-				},
-				"phpthunder.format.formatHtml": {
-					"scope": "resource",
-					"type": "boolean",
-					"default": false,
-					"description": "whether formatting html at the same time",
-					"order": 6
-				},
-				"phpthunder.format.documentFormattingProvider": {
-					"scope": "resource",
-					"type": "boolean",
-					"default": true,
-					"description": "Register PHP document formatting provider, right mouse-click context menu, show as 'Format Document', after changing this option you should restart your editor.",
-					"order": 8
-				},
-				"phpthunder.format.phpcs.enable": {
-					"scope": "resource",
-					"type": "boolean",
-					"default": true,
-					"description": "Control whether phpcs is enabled for PHP files or not.",
-					"order": 10
-				},
-				"phpthunder.format.phpcs.executablePath": {
-					"scope": "resource",
-					"type": "string",
-					"default": null,
-					"description": "Points to the phpcs exectuable.",
-					"order": 15
-				},
-				"phpthunder.format.phpcbf.enable": {
-					"scope": "resource",
-					"type": "boolean",
-					"default": true,
-					"description": "Control whether phpcbf is enabled for PHP files or not.",
-					"order": 20
-				},
-				"phpthunder.format.phpcbf.executablePath": {
-					"scope": "resource",
-					"type": "string",
-					"default": null,
-					"description": "Points to the phpcbf exectuable.",
-					"order": 25
-				},
-				"phpthunder.format.phpcsfixer.enable": {
-					"scope": "resource",
-					"type": "boolean",
-					"default": true,
-					"description": "Control whether php-cs-fixer is enabled for PHP files or not.",
-					"order": 27
-				},
-				"phpthunder.format.phpcsfixer.executablePath": {
-					"scope": "resource",
-					"type": "string",
-					"default": null,
-					"description": "Points to the php-cs-fixer exectuable.",
-					"order": 28
-				},
-				"phpthunder.format.phpcsfixer.allowRisky": {
-					"scope": "resource",
-					"type": "boolean",
-					"default": false,
-					"description": "Are risky fixers allowed?",
-					"order": 29
-				},
-				"phpthunder.format.phpfmt.enable": {
-					"scope": "resource",
-					"type": "boolean",
-					"default": true,
-					"description": "Control whether phpfmt is enabled for PHP files or not.",
-					"order": 30
-				},
-				"phpthunder.format.phpfmt.executablePath": {
-					"scope": "resource",
-					"type": "string",
-					"default": null,
-					"description": "Points to the phpfmt exectuable.",
-					"order": 31
-				},
-				"phpthunder.format.standard": {
-					"scope": "resource",
-					"type": [
-						"string",
-						"null"
-					],
-					"default": "PSR12",
-					"description": "Optional. The name or path of the coding standard to use.",
-					"order": 40
-				},
-				"phpthunder.format.autoConfigSearch": {
-					"scope": "resource",
-					"type": "boolean",
-					"default": false,
-					"description": "Automatically search for any `phpcs.xml`, `phpcs.xml.dist`, `phpcs.ruleset.xml` or `ruleset.xml` file to use as configuration. Overrides custom standards defined above.",
-					"order": 50
-				},
-				"phpthunder.format.ignorePatterns": {
-					"scope": "resource",
-					"type": "array",
-					"items": {
-						"type": "string",
-						"title": "A glob pattern to skip files and folders that match."
+		"configuration": [
+			{
+				"id": "phpthunder",
+				"title": "PHPThunder",
+				"order": 10,
+				"properties": {
+					"phpthunder.enable": {
+						"Title": "Enable PHPThunder",
+						"scope": "resource",
+						"type": "boolean",
+						"default": true,
+						"description": "Enable PHPThunder.",
+						"order": 10
 					},
-					"default": [],
-					"description": "An array of glob patterns to skip files and folders that match when linting your documents.",
-					"order": 60
-				},
-				"phpthunder.format.errorSeverity": {
-					"scope": "resource",
-					"type": "number",
-					"default": 5,
-					"minimum": 0,
-					"description": "The phpcs minimum severity an error must have to be displayed.",
-					"order": 70
-				},
-				"phpthunder.format.warningSeverity": {
-					"scope": "resource",
-					"type": "number",
-					"default": 5,
-					"minimum": 0,
-					"description": "The phpcs minimum severity a warning must have to be displayed.",
-					"order": 80
-				},
-				"phpthunder.format.showWarnings": {
-					"scope": "resource",
-					"type": "boolean",
-					"default": true,
-					"description": "Control whether phpcs warnings are displayed.",
-					"order": 90
-				},
-				"phpthunder.format.showSources": {
-					"scope": "resource",
-					"type": "boolean",
-					"default": false,
-					"description": "Show sniff source codes in diagnostic messages.",
-					"order": 100
-				},
-				"phpthunder.format.traceServer": {
-					"scope": "resource",
-					"type": "string",
-					"enum": [
-						"off",
-						"messages",
-						"verbose"
-					],
-					"default": "off",
-					"description": "Traces the communication between VSCode and the language server.",
-					"order": 110
+					"phpthunder.phpExecutablePath": {
+						"Title": "PHP Executable Path",
+						"scope": "resource",
+						"type": "string",
+						"default": "/usr/bin/php",
+						"description": "Points to the php exectuable.",
+						"order": 20
+					},
+					"phpthunder.debug": {
+						"Title": "PHPThunder Show Debug Messages",
+						"scope": "resource",
+						"type": "boolean",
+						"default": false,
+						"description": "Show PHPThunder debug information.",
+						"order": 30
+					}
+				}
+			},
+			{
+				"id": "phpthunder_format",
+				"title": "PHPThunder Format",
+				"order": 20,
+				"properties": {
+					"phpthunder.format.enable": {
+						"Title": "Enable PHPThunder Formatting Features",
+						"scope": "resource",
+						"type": "boolean",
+						"default": true,
+						"description": "Enable PHPThunder formatting features.",
+						"order": 10
+					},
+					"phpthunder.format.documentFormattingProvider": {
+						"Title": "Add Document Formatting Provider",
+						"scope": "resource",
+						"type": "boolean",
+						"default": true,
+						"description": "Add document formatting provider.",
+						"order": 20
+					},
+					"phpthunder.format.onSave": {
+						"Title": "Format Document on Save",
+						"scope": "resource",
+						"type": "boolean",
+						"default": true,
+						"description": "Format document on save.",
+						"order": 30
+					},
+					"phpthunder.format.onBracket": {
+						"Title": "Format Document on Bracker",
+						"scope": "resource",
+						"type": "boolean",
+						"default": false,
+						"description": "Format the code in brackets on typing close bracket.",
+						"order": 40
+					},
+					"phpthunder.format.onSemicolon": {
+						"Title": "Format Document on Semicolon",
+						"scope": "resource",
+						"type": "boolean",
+						"default": false,
+						"description": "Format current line on typing semicolon.",
+						"order": 50
+					},
+					"phpthunder.format.formatHtml": {
+						"Title": "Format HTML",
+						"scope": "resource",
+						"type": "boolean",
+						"default": true,
+						"description": "Format HTML.",
+						"order": 60
+					}
+				}
+			},
+			{
+				"id": "phpthunder_tools",
+				"title": "PHPThunder Tools",
+				"order": 30,
+				"properties": {
+					"phpthunder.tools.phpExecutablePath": {
+						"Title": "PHP Executable Path for Tools",
+						"scope": "resource",
+						"type": "string",
+						"default": null,
+						"description": "Points to the php exectuable to be used with tools. Leave empty to use the default.",
+						"order": 10
+					}
+				}
+			},
+			{
+				"id": "phpthunder_composer",
+				"title": "PHPThunder Composer",
+				"order": 40,
+				"properties": {
+					"phpthunder.composer.enable": {
+						"Title": "Enable PHPThunder Composer",
+						"scope": "resource",
+						"type": "boolean",
+						"default": true,
+						"description": "Enable PHPThunder composer.",
+						"order": 10
+					},
+					"phpthunder.composer.phpExecutablePath": {
+						"Title": "PHP Executable Path for Composer",
+						"scope": "resource",
+						"type": "string",
+						"default": null,
+						"description": "Points to the php exectuable to be used with composer. Leave empty to use the default.",
+						"order": 20
+					},
+					"phpthunder.composer.executablePath": {
+						"Title": "Composer Executable Path",
+						"scope": "resource",
+						"type": "string",
+						"default": "composer",
+						"description": "Points to the composer exectuable.",
+						"order": 30
+					},
+					"phpthunder.composer.composerJsonPath": {
+						"Title": "Composer JSON Path",
+						"scope": "resource",
+						"type": "string",
+						"default": "composer.json",
+						"description": "The path to project composer.json.",
+						"order": 40
+					}
+				}
+			},
+			{
+				"id": "phpthunder_phpcs",
+				"title": "PHPThunder PHPCS",
+				"order": 50,
+				"properties": {
+					"phpthunder.phpcs.enable": {
+						"Title": "Enable PHPThunder PHPCS",
+						"scope": "resource",
+						"type": "boolean",
+						"default": true,
+						"description": "Enable PHPThunder PHPCS for PHP files.",
+						"order": 10
+					},
+					"phpthunder.phpcs.phpExecutablePath": {
+						"Title": "PHP Executable Path for PHPCS",
+						"scope": "resource",
+						"type": "string",
+						"default": null,
+						"description": "Points to the php exectuable to be used with PHPCS. Leave empty to use the default.",
+						"order": 20
+					},
+					"phpthunder.phpcs.executablePath": {
+						"Title": "PHPThunder PHPCS Excutable Path",
+						"scope": "resource",
+						"type": "string",
+						"default": null,
+						"description": "Points to the phpcs exectuable.",
+						"order": 30
+					},
+					"phpthunder.phpcs.autoConfigSearch": {
+						"Title": "Enable PHPCS Auto Config Search",
+						"scope": "resource",
+						"type": "boolean",
+						"default": false,
+						"description": "Automatically search for any `phpcs.xml`, `phpcs.xml.dist`, `phpcs.ruleset.xml` or `ruleset.xml` file to use as configuration. Overrides custom standards defined bellow.",
+						"order": 40
+					},
+					"phpthunder.phpcs.standard": {
+						"Title": "PHPThunder PHPCS Standard",
+						"scope": "resource",
+						"type": [
+							"string",
+							"null"
+						],
+						"default": "PSR12",
+						"description": "Optional. The name or path of the coding standard to use with PHPCS.",
+						"order": 50
+					},
+					"phpthunder.phpcs.errorSeverity": {
+						"Title": "PHPThunder PHPCS Error Severity",
+						"scope": "resource",
+						"type": "number",
+						"default": 5,
+						"minimum": 0,
+						"description": "PHPThunder PHPCS error severity.",
+						"order": 60
+					},
+					"phpthunder.phpcs.warningSeverity": {
+						"Title": "PHPThunder PHPCS warning Severity",
+						"scope": "resource",
+						"type": "number",
+						"default": 5,
+						"minimum": 0,
+						"description": "PHPThunder PHPCS warning severity.",
+						"order": 70
+					},
+					"phpthunder.phpcs.showWarnings": {
+						"Title": "Show PHPCS Warnings",
+						"scope": "resource",
+						"type": "boolean",
+						"default": true,
+						"description": "Show PHPCS warnings.",
+						"order": 80
+					},
+					"phpthunder.phpcs.showSources": {
+						"Title": "Show PHPCS Sources",
+						"scope": "resource",
+						"type": "boolean",
+						"default": true,
+						"description": "Show PHPCS sources",
+						"order": 90
+					},
+					"phpthunder.phpcs.ignorePatterns": {
+						"Title": "Ignore PHPCS Patterns",
+						"scope": "resource",
+						"type": "array",
+						"items": {
+							"type": "string",
+							"title": "A glob pattern to skip files and folders that match."
+						},
+						"default": [],
+						"description": "An array of glob patterns to skip files and folders that match when linting your documents.",
+						"order": 100
+					}
+				}
+			},
+			{
+				"id": "phpthunder_phpcbf",
+				"title": "PHPThunder PHPCBF",
+				"order": 60,
+				"properties": {
+					"phpthunder.phpcbf.enable": {
+						"Title": "Enable PHPThunder PHPCBF",
+						"scope": "resource",
+						"type": "boolean",
+						"default": true,
+						"description": "Enable PHPThunder PHPCBF for PHP files.",
+						"order": 10
+					},
+					"phpthunder.phpcbf.phpExecutablePath": {
+						"Title": "PHP Executable Path for PHPCBF",
+						"scope": "resource",
+						"type": "string",
+						"default": null,
+						"description": "Points to the php exectuable to be used with PHPCBF. Leave empty to use the default.",
+						"order": 20
+					},
+					"phpthunder.phpcbf.executablePath": {
+						"Title": "PHPThunder PHPCBF Excutable Path",
+						"scope": "resource",
+						"type": "string",
+						"default": null,
+						"description": "Points to the phpcbf exectuable.",
+						"order": 30
+					},
+					"phpthunder.phpcbf.autoConfigSearch": {
+						"Title": "Enable PHPCBF Auto Config Search",
+						"scope": "resource",
+						"type": "boolean",
+						"default": false,
+						"description": "Automatically search for any `phpcs.xml`, `phpcs.xml.dist`, `phpcs.ruleset.xml` or `ruleset.xml` file to use as configuration. Overrides custom standards defined bellow.",
+						"order": 40
+					},
+					"phpthunder.phpcbf.standard": {
+						"Title": "PHPThunder PHPCBF Standard",
+						"scope": "resource",
+						"type": [
+							"string",
+							"null"
+						],
+						"default": "PSR12",
+						"description": "Optional. The name or path of the coding standard to use with PHPCBF.",
+						"order": 50
+					},
+					"phpthunder.phpcbf.errorSeverity": {
+						"Title": "PHPThunder PHPCBF Error Severity",
+						"scope": "resource",
+						"type": "number",
+						"default": 5,
+						"minimum": 0,
+						"description": "PHPThunder PHPCBF error severity.",
+						"order": 60
+					},
+					"phpthunder.phpcbf.warningSeverity": {
+						"Title": "PHPThunder PHPCBF warning Severity",
+						"scope": "resource",
+						"type": "number",
+						"default": 5,
+						"minimum": 0,
+						"description": "PHPThunder PHPCBF warning severity.",
+						"order": 70
+					},
+					"phpthunder.phpcbf.showWarnings": {
+						"Title": "Show PHPCBF Warnings",
+						"scope": "resource",
+						"type": "boolean",
+						"default": true,
+						"description": "Show PHPCBF warnings.",
+						"order": 80
+					},
+					"phpthunder.phpcbf.showSources": {
+						"Title": "Show PHPCBF Sources",
+						"scope": "resource",
+						"type": "boolean",
+						"default": true,
+						"description": "Show PHPCBF sources",
+						"order": 90
+					},
+					"phpthunder.phpcbf.ignorePatterns": {
+						"Title": "Ignore PHPCBF Patterns",
+						"scope": "resource",
+						"type": "array",
+						"items": {
+							"type": "string",
+							"title": "A glob pattern to skip files and folders that match."
+						},
+						"default": [],
+						"description": "An array of glob patterns to skip files and folders that match when linting your documents.",
+						"order": 100
+					}
+				}
+			},
+			{
+				"id": "phpthunder_phpcsfixer",
+				"title": "PHPThunder PHP-CS-Fixer",
+				"order": 70,
+				"properties": {
+					"phpthunder.phpcsfixer.enable": {
+						"Title": "Enable PHPThunder PHP-CS-Fixer",
+						"scope": "resource",
+						"type": "boolean",
+						"default": true,
+						"description": "Enable PHPThunder PHP-CS-Fixer for PHP files.",
+						"order": 10
+					},
+					"phpthunder.phpcsfixer.phpExecutablePath": {
+						"Title": "PHP Executable Path for PHP-CS-Fixer",
+						"scope": "resource",
+						"type": "string",
+						"default": null,
+						"description": "Points to the php exectuable to be used with PHP-CS-Fixer. Leave empty to use the default.",
+						"order": 20
+					},
+					"phpthunder.phpcsfixer.executablePath": {
+						"Title": "PHPThunder PHP-CS-Fixer Excutable Path",
+						"scope": "resource",
+						"type": "string",
+						"default": null,
+						"description": "Points to the PHP-CS-Fixer exectuable.",
+						"order": 30
+					},
+					"phpthunder.phpcsfixer.allowRisky": {
+						"Title": "PHPThunder PHP-CS-Fixer Allow Risky",
+						"scope": "resource",
+						"type": "boolean",
+						"default": false,
+						"description": "Allow risky fixes.",
+						"order": 40
+					}
+				}
+			},
+			{
+				"id": "phpthunder_phpfmt",
+				"title": "PHPThunder PHPFMT",
+				"order": 70,
+				"properties": {
+					"phpthunder.phpfmt.enable": {
+						"Title": "Enable PHPThunder PHPFMT",
+						"scope": "resource",
+						"type": "boolean",
+						"default": true,
+						"description": "Enable PHPThunder PHPFMT for PHP files.",
+						"order": 10
+					},
+					"phpthunder.phpfmt.phpExecutablePath": {
+						"Title": "PHP Executable Path for PHPFMT",
+						"scope": "resource",
+						"type": "string",
+						"default": null,
+						"description": "Points to the php exectuable to be used with PHPFMT. Leave empty to use the default.",
+						"order": 20
+					},
+					"phpthunder.phpfmt.executablePath": {
+						"Title": "PHPThunder PHPFMT Excutable Path",
+						"scope": "resource",
+						"type": "string",
+						"default": null,
+						"description": "Points to the PHPFMT exectuable.",
+						"order": 30
+					}
 				}
 			}
-		},
+		],
 		"commands": [
 			{
 				"command": "phpthunder.showPHPVersion",

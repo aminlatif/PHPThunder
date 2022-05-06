@@ -1,14 +1,19 @@
-export default class PluginConfig {
-    private enable: boolean;
-    private executablePath: string | null;
+import ConfigAbstract from "@interface/ConfigAbstract";
 
-    constructor(enable: boolean, executablePath: string | null) {
-        this.enable = enable;
-        this.executablePath = executablePath;
+export default class PluginConfig extends ConfigAbstract {
+    private phpExecutablePath: string | null = null;
+    private executablePath: string | null = null;
+
+    public setPHPExecutablePath(phpExecutablePath: string|null): PluginConfig {
+        return this.setData("phpExecutablePath", phpExecutablePath) as PluginConfig;
     }
 
-    public getEnable(): boolean {
-        return this.executablePath !== null && this.enable;
+    public getPHPExecutablePath(): string | null {
+        return this.phpExecutablePath;
+    }
+
+    public setExecutablePath(executablePath: string|null): PluginConfig {
+        return this.setData("executablePath", executablePath) as PluginConfig;
     }
 
     public getExecutablePath(): string | null {
