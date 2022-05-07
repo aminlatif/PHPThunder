@@ -45,7 +45,7 @@ export default class LogService {
         } else if (severity === LogLevel.error) {
             this.writeToOuputChannel("[error] " + messageString);
             if (popup) {
-                vscode.window.showWarningMessage(messageString);
+                vscode.window.showInformationMessage(messageString);
             }
         } else if (severity === LogLevel.warning) {
             this.writeToOuputChannel("[warning] " + messageString);

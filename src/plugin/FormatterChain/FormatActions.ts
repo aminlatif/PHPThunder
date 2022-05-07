@@ -19,7 +19,15 @@ export default class FormatActions {
         return new Promise(async (resolve, reject) => {
             this.plugin.log(
                 "Formatting document " + document.fileName + " using chain ",
-                this.plugin.getConfig().getFormatConfig().getPhpFormatterChain()
+                this.plugin.getConfig().getFormatConfig().getPhpFormatterChain(),
+                0,
+                false
+            );
+            this.plugin.log(
+                "",
+                this.plugin.getConfig().getFormatConfig().getPhpFormatterChain(),
+                -1,
+                true
             );
             const originalText = document.getText();
             const lastLine = document.lineAt(document.lineCount - 1);
