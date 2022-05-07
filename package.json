@@ -2,7 +2,7 @@
 	"name": "phpthunder",
 	"displayName": "PHPThunder",
 	"description": "PHP tools an utilities for VSCode.",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"publisher": "Babirusa",
 	"author": {
 		"name": "Amin Latifkar",
@@ -19,7 +19,7 @@
 		"url": "https://github.com/aminlatif/PHPThunder/issues"
 	},
 	"engines": {
-		"vscode": "^1.66.0"
+		"vscode": "^1.67.0"
 	},
 	"categories": [
 		"Programming Languages",
@@ -149,7 +149,7 @@
 							"phpfmt",
 							"chain"
 						],
-						"default": "phpcbf",
+						"default": "chain",
 						"description": "PHP formatter.",
 						"order": 70
 					},
@@ -166,7 +166,7 @@
 								"phpfmt"
 							]
 						},
-						"default": ["php-cs-fixer", "phpcbf"],
+						"default": ["php-cs-fixer", "phpcbf", "phpfmt"],
 						"description": "PHP formatter chain.",
 						"order": 80
 					}
@@ -447,13 +447,24 @@
 						"description": "Points to the PHP-CS-Fixer exectuable.",
 						"order": 30
 					},
+					"phpthunder.phpcsfixer.configFile": {
+						"Title": "PHPThunder PHP-CS-Fixer Config File Path",
+						"scope": "resource",
+						"type": [
+							"string",
+							"null"
+						],
+						"default": null,
+						"description": "The path of the config file to use with PHP-CS-Fixer.",
+						"order": 40
+					},
 					"phpthunder.phpcsfixer.allowRisky": {
 						"Title": "PHPThunder PHP-CS-Fixer Allow Risky",
 						"scope": "resource",
 						"type": "boolean",
 						"default": false,
 						"description": "Allow risky fixes.",
-						"order": 40
+						"order": 50
 					}
 				}
 			},
@@ -485,6 +496,17 @@
 						"default": null,
 						"description": "Points to the PHPFMT exectuable.",
 						"order": 30
+					},
+					"phpthunder.phpfmt.configFile": {
+						"Title": "PHPThunder PHPFMT Config File Path",
+						"scope": "resource",
+						"type": [
+							"string",
+							"null"
+						],
+						"default": null,
+						"description": "The path of the config file to use with PHPFMT.",
+						"order": 40
 					}
 				}
 			}

@@ -17,7 +17,11 @@ export default class DocumentActions {
         let phpfmtCommand = this.plugin.getExceuteBaseCommand();
         // phpfmtCommand += " --standard=" + this.getStandard() + " ";
         // phpfmtCommand += "--no-colors ";
-        phpfmtCommand += filePath;
+        if(this.plugin.getConfig().getPHPFMTConfig().getConfigFilePath()) {
+            phpfmtCommand += " --config=" + this.plugin.getConfig().getPHPFMTConfig().getConfigFilePath();
+        }
+        phpfmtCommand += " -v";
+        phpfmtCommand += " " + filePath;
         await this.plugin.execute(phpfmtCommand);
     }
 }

@@ -9,7 +9,7 @@ import ShowInfo from "./FormatterChain/ShowInfo";
 import FormatActions from "./FormatterChain/FormatActions";
 
 export default class FormatterChain extends PluginAbstract {
-    public pluginName: string = "Composer";
+    public pluginName: string = "FormatterChain";
 
     public initializer: Initializer;
     public showInfo:ShowInfo;

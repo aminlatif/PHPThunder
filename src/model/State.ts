@@ -84,6 +84,13 @@ export default class State {
         throw new Error("Log service is not set");
     }
 
+    public isLogServiceDefined(): boolean {
+        if (this.logService) {
+            return true;
+        }
+        return false;
+    }
+
     public setPluginService(pluginService: PluginService): void {
         this.pluginService = pluginService;
     }

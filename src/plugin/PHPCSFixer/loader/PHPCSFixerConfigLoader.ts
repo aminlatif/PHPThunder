@@ -9,6 +9,7 @@ export default class PHPCSFixerConfigLoader extends ConfigLoaderAbstract {
         const phpcsfixerConfig = PluginConfigLoader.load<PHPCSFixerConfig>(workspaceConfiguration, "phpcsfixer", new PHPCSFixerConfig());
 
         phpcsfixerConfig.setName("PHPCS Plugin Config");
+        phpcsfixerConfig.setConfigFilePath(this.getAbsolutePath(workspaceConfiguration.get<string | null>("phpcsfixer.configFile", null)));
         phpcsfixerConfig.setAllowRiskyEnabled(workspaceConfiguration.get("phpcsfixer.allowRisky", false));
 
         phpcsfixerConfig.lock();

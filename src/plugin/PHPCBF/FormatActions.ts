@@ -10,23 +10,39 @@ export default class FormatActions {
         this.plugin = plugin;
     }
 
-    format(document: vscode.TextDocument, options: vscode.FormattingOptions, token:vscode.CancellationToken): vscode.ProviderResult<vscode.TextEdit[]> {
+    format(
+        document: vscode.TextDocument,
+        options: vscode.FormattingOptions,
+        token: vscode.CancellationToken
+    ): vscode.ProviderResult<vscode.TextEdit[]> {
         return new Promise(async (resolve, reject) => {
-            this.plugin.log("Formatting document: " + document.fileName);
+            this.plugin.log("Formatting document " + document.fileName + " using PHPCBF.");
             const originalText = document.getText();
-            let lastLine = document.lineAt(document.lineCount - 1);
-            let range = new vscode.Range(new vscode.Position(0, 0), lastLine.range.end);
-            const fixedText = await this.plugin.getDocumentActions().formatVSCodeDocumentUsingPHPCBF(document);
-            if (fixedText.length > 0 && fixedText !== originalText) {
-                this.plugin.log("Document: " + document.fileName + " - formatted.");
-                resolve([new vscode.TextEdit(range, fixedText)]);
-            } else if (fixedText === originalText) {
-                this.plugin.log("Document: " + document.fileName + " - no changes made.");
-                resolve([]);
-            } else {
-                this.plugin.log("Document: " + document.fileName + " - formatting failed.");
-            }
-            reject();
+            const lastLine = document.lineAt(document.lineCount - 1);
+            const range = new vscode.Range(new vscode.Position(0, 0), lastLine.range.end);
+            const textEdit = new vscode.TextEdit(range, originalText);
+
+            resolve([await this.formatTextEdit(textEdit, options, token)]);
         });
+    }
+
+    async formatTextEdit(
+        textEdit: vscode.TextEdit,
+        options: vscode.FormattingOptions | null = null,
+        token: vscode.CancellationToken | null = null
+    ): Promise<vscode.TextEdit> {
+        const originalText = textEdit.newText;
+        const fixedText = await this.plugin.getStringActions().runPHPCBFOnString(originalText);
+
+        if (fixedText.length > 0 && fixedText !== originalText) {
+            this.plugin.log("String formatted by PHPCBF.");
+            return new vscode.TextEdit(textEdit.range, fixedText);
+        } else if (fixedText === originalText) {
+            this.plugin.log("PHPCBF made no changes to the string.");
+        } else {
+            this.plugin.log("String formatting by PHPCBF failed.");
+        }
+
+        return textEdit;
     }
 }

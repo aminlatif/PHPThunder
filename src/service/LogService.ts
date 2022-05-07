@@ -3,11 +3,15 @@ import * as vscode from "vscode";
 import { LogLevel } from "@enum/logLevel";
 
 export default class LogService {
-    private phpThunderOutputChannel: vscode.OutputChannel;
+    private phpThunderOutputChannel: vscode.OutputChannel | null = null;
     private debug: boolean = true;
 
-    constructor() {
-        this.phpThunderOutputChannel = vscode.window.createOutputChannel("PHPThunder");
+    constructor() {}
+
+    public createOuputChannel(): void {
+        if(this.phpThunderOutputChannel === null) {
+            this.phpThunderOutputChannel = vscode.window.createOutputChannel("PHPThunder");
+        }
     }
 
     public setDebug(debug: boolean): void {
@@ -29,25 +33,31 @@ export default class LogService {
             messageString += objectString;
         }
         if (severity === LogLevel.debug && this.debug) {
-            this.phpThunderOutputChannel.appendLine("[debug] " + messageString);
-            if(popup){
+            this.writeToOuputChannel("[debug] " + messageString);
+            if (popup) {
                 vscode.window.showInformationMessage("Debug Message: " + messageString);
             }
         } else if (severity === LogLevel.information) {
-            this.phpThunderOutputChannel.appendLine("[info] " + messageString);
-            if(popup){
+            this.writeToOuputChannel("[info] " + messageString);
+            if (popup) {
                 vscode.window.showInformationMessage(messageString);
             }
         } else if (severity === LogLevel.error) {
-            this.phpThunderOutputChannel.appendLine("[error] " + messageString);
-            if(popup){
+            this.writeToOuputChannel("[error] " + messageString);
+            if (popup) {
                 vscode.window.showWarningMessage(messageString);
             }
         } else if (severity === LogLevel.warning) {
-            this.phpThunderOutputChannel.appendLine("[warning] " + messageString);
-            if(popup){
+            this.writeToOuputChannel("[warning] " + messageString);
+            if (popup) {
                 vscode.window.showErrorMessage(messageString);
             }
+        }
+    }
+
+    public writeToOuputChannel(message: string): void {
+        if (this.phpThunderOutputChannel) {
+            this.phpThunderOutputChannel.appendLine(message);
         }
     }
 }

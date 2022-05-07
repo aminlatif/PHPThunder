@@ -17,7 +17,10 @@ export default class DocumentActions {
         let phpcsfixerCommand = this.plugin.getExceuteBaseCommand();
         // phpcsfixerCommand += " --standard=" + this.getConfig().getPHPCSFixerConfig().getStandard() + " ";
         // phpcsfixerCommand += "--no-colors ";
-        phpcsfixerCommand += filePath;
+        phpcsfixerCommand += " fix " + filePath;
+        if(this.plugin.getConfig().getPHPCSFixerConfig().getConfigFilePath()) {
+            phpcsfixerCommand += " --config=" + this.plugin.getConfig().getPHPCSFixerConfig().getConfigFilePath();
+        }
         await this.plugin.execute(phpcsfixerCommand);
     }
 }

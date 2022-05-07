@@ -8,15 +8,19 @@ import LogService from "@service/LogService";
 import PluginService from "@service/PluginService";
 
 import ConfigLoader from "@loader/ConfigLoader";
+import { stat } from "fs";
 
 export default class StateLoader {
-    public static load(extensionContext: vscode.ExtensionContext): State {
+    public static load(extensionContext: vscode.ExtensionContext, origianlState: State | null = null): State {
         console.log("Loading PHPThunder state...");
 
-        const state = new State(extensionContext);
+        const state = origianlState || new State(extensionContext);
 
         console.log("Loading log service...");
-        state.setLogService(new LogService());
+        if (!state.isLogServiceDefined()) {
+            state.setLogService(new LogService());
+            state.getLogService().createOuputChannel();
+        }
         state.getLogService().log("Log service loaded.", null, 0);
 
         state.getLogService().log("Loading active text editor...", null, 0);
@@ -29,8 +33,12 @@ export default class StateLoader {
         }
 
         state.getLogService().log("Loading configuration...", null, 0);
-        state.setWorkspaceConfiguration(vscode.workspace.getConfiguration("phpthunder", state.getActiveTextEditorDocumentUri()));
-        state.getLogService().log("Document Workspace Folder: " +(ConfigLoader.getDocumentWorkspaceFolder() as string));
+        state.setWorkspaceConfiguration(
+            vscode.workspace.getConfiguration("phpthunder", state.getActiveTextEditorDocumentUri())
+        );
+        state
+            .getLogService()
+            .log("Document Workspace Folder: " + (ConfigLoader.getDocumentWorkspaceFolder() as string));
         state.setConfigService(new ConfigService(ConfigLoader.load(state.getWorkspaceConfiguration())));
         state.setDebug(state.getConfigService().getConfig().isDebugEnabled());
         state.getLogService().setDebug(state.getDebug());
@@ -50,7 +58,7 @@ export default class StateLoader {
         state.setPluginService(new PluginService(state));
         state.getLogService().log("Plugin service loaded.", null, 0);
 
-        state.getLogService().log("PHPThunder state loaded.", null , 0);
+        state.getLogService().log("PHPThunder state loaded.", null, 0);
         return state;
     }
 }

@@ -9,6 +9,7 @@ export default class PHPFMTConfigLoader extends ConfigLoaderAbstract {
         const phpfmtConfig = PluginConfigLoader.load<PHPFMTConfig>(workspaceConfiguration, "phpfmt", new PHPFMTConfig());
 
         phpfmtConfig.setName("PHPCS Plugin Config");
+        phpfmtConfig.setConfigFilePath(this.getAbsolutePath(workspaceConfiguration.get<string | null>("phpfmt.configFile", null)));
 
         phpfmtConfig.lock();
         return phpfmtConfig;
